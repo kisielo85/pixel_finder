@@ -200,7 +200,7 @@ def webExc(x):
 def cls():
   while(1):
     os.system("cls")
-    time.sleep(60)
+    time.sleep(600)
 
 actions=["tv-spotify","tv-on","tv-off","pc-on"]
 actions.sort()
