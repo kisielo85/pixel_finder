@@ -1,5 +1,17 @@
-sus
 host it on a server or (for example) xampp
 
-if your website and python server aren't on the same machine:
-replace localhost with ip
+
+for better secuirity change those strings:
+
+finder.py
+line 177 - AAAAAAA
+
+ip_set.php
+line 2 -  AAAAAAA
+line 12 - BBBBBBB, CCCCCCC
+
+result.php
+line 53 - BBBBBBB, CCCCCCC
+
+index.php
+line 42 - BBBBBBB, CCCCCCC
