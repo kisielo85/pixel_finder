@@ -1,4 +1,6 @@
 # pixel_finder-place2022
+Thanks to [u/opl_](https://www.reddit.com/user/opl_) for sharing his [scraped data](https://www.reddit.com/r/place/comments/txh660/dump_of_the_raw_unprocessed_data_i_collected/) that made the project possible<br>
+also, check out [ShadowLp174](https://github.com/ShadowLp174) and his [discord bot](https://discord.com/oauth2/authorize?client_id=985073004826480640&permissions=277025459200&scope=bot%20applications.commands) for finding pixels
 <br>
 
 ## how does it work
