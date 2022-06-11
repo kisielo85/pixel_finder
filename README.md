@@ -28,3 +28,30 @@ if I want to check for example 69,420:<br>
 ![image](https://user-images.githubusercontent.com/33911808/173190190-552777e0-f1bb-4336-9ef8-a4fd585c8bba.png)
 
 
+## setup
+### database
+- use files in \_database_ folder to create tables
+- stop mysql
+- replace .idb files with [this](https://mega.nz/folder/SXoFlZ5b#UB23bmtWT9PmsQs8rsDKHg)*
+- run ```ALTER TABLE nick_data IMPORT TABLESPACE```
+- run ```ALTER TABLE place_data IMPORT TABLESPACE```
+- import [this](https://drive.google.com/drive/folders/1z_SuT7_nsySWtSrca8cwqCTBT6JtBOos) table
+
+**downloanding this 55GB database from mega.nz can take a while, you can contact me so I could send it via torrent
+discord: kisielo85#2864*
+
+### website
+- just host somewhere files from \_website_
+
+### finder.py
+- use requirements.txt to get all the libraries
+- change *website*, *db_user* and *db_pass* variables to connect to yout website and database
+- run on the same machine as the database
+
+### additional secuirity
+to correct for the dynamic ip - ip_set.php updates and hashes it<br>
+if you don't want anyone to be able to decode your ip - change those strings:
+- "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"<br>
+in finder.py, ip_set.php
+- "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB" and "CCCCCCCCCCCCCCCCC"<br>
+in ip_set.php, result.php, index.php
