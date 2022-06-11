@@ -49,7 +49,7 @@ discord: kisielo85#2864
 
 ### finder.py
 - use requirements.txt to get all the libraries
-- change *website*, *db_user* and *db_pass* variables to connect to yout website and database
+- change ```website```, ```db_user``` and ```db_pass``` variables to connect to yout website and database
 - run on the same machine as the database
 <br>
 
