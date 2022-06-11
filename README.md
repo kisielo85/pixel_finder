@@ -49,14 +49,14 @@ discord: kisielo85#2864
 
 ### finder.py
 - use requirements.txt to get all the libraries
-- change ```website```, ```db_user``` and ```db_pass``` variables to connect to yout website and database
+- change ```website```, ```db_user``` and ```db_pass``` variables to connect to your website and database
 - run on the same machine as the database
 <br>
 
 ### additional secuirity
-to correct for the dynamic ip - ip_set.php updates and hashes it<br>
+to correct for the dynamic ip - ```ip_set.php``` updates and hashes it<br>
 if you don't want anyone to be able to decode your ip - change those strings:
 - "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"<br>
-in finder.py, ip_set.php
+in ```finder.py```, ```ip_set.php```
 - "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB" and "CCCCCCCCCCCCCCCCC"<br>
-in ip_set.php, result.php, index.php
+in ```ip_set.php```, ```result.php```, ```index.php```
