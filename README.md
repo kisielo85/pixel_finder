@@ -37,8 +37,8 @@ if I want to check for example 69,420:<br>
 - run ```ALTER TABLE place_data IMPORT TABLESPACE```
 - import [this](https://drive.google.com/drive/folders/1z_SuT7_nsySWtSrca8cwqCTBT6JtBOos) table
 
-**downloanding this 55GB database from mega.nz can take a while, you can contact me so I could send it via torrent
-discord: kisielo85#2864*
+*downloading this 55GB database from mega.nz can take a while, you can contact me so I could send it via torrent
+discord: kisielo85#2864
 <br><br>
 
 ### website
