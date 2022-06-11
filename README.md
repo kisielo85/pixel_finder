@@ -17,7 +17,7 @@ thankfully [u/opl_](https://www.reddit.com/user/opl_) was scraping the site duri
 this data is not as accurate but by roughly comparing pixel cords and dates multiple times, you get a list of possible hashes<br>
 ![image](https://user-images.githubusercontent.com/33911808/173189766-b02d17ad-82fc-440d-b8df-e3ef56c434b1.png)<br>
 the only thing left to do now is to get the hash that occured the most times
-<br><br><br>
+<br><br>
 
 ### trophies
 every pixel can get only one first_placer and one final_canvas trophy<br>
