@@ -16,7 +16,7 @@ luckily, [u/opl_](https://www.reddit.com/user/opl_) was scraping the site during
 
 this data is not as accurate but by roughly comparing pixel cords and dates multiple times, you get a list of possible hashes<br>
 ![image](https://user-images.githubusercontent.com/33911808/173189766-b02d17ad-82fc-440d-b8df-e3ef56c434b1.png)<br>
-the only thing left to do now is to get the hash that occured the most times
+the only thing left to do now is to get a hash that occured the most times
 <br><br>
 
 ### trophies
