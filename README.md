@@ -7,7 +7,7 @@ also, check out [ShadowLp174](https://github.com/ShadowLp174) and his [discord b
 
 ### finding hashes
 
-the [official dataset](https://www.reddit.com/r/place/comments/txvk2d/rplace_datasets_april_fools_2022/) contains all the data about pixels<br>
+the [official dataset](https://www.reddit.com/r/place/comments/txvk2d/rplace_datasets_april_fools_2022/) contains all data about pixels<br>
 the thing is - you can't see who placed the pixel, there is only a hash that can't be reversed<br>
 ![image](https://user-images.githubusercontent.com/33911808/173188880-a7687db6-889e-4b9b-a886-d9d243220deb.png)
 
