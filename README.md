@@ -60,3 +60,23 @@ if you don't want anyone to be able to decode your ip - change those strings:
 in ```finder.py```, ```ip_set.php```
 - "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB" and "CCCCCCCCCCCCCCCCC"<br>
 in ```ip_set.php```, ```result.php```, ```index.php```
+
+<br>
+
+## API
+you can get raw data using this link:<br>
+http://kisielo85.cba.pl/place2022/raw_result.php?nick=kisielo85<br>
+the possible outputs are: ```request_send```, ```processing```, ```not_found```<br>
+or data, that looks like this:
+```c++
+hash.
+date;x;y;color;[trophies].
+date;x;y;color;[trophies].
+date;x;y;color;[trophies].
+_end_
+```
+trophies are represented by a list of integers:<br>
+0 - first placer<br>
+1 - final canvas<br>
+2 - endgame<br>
+
