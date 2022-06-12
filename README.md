@@ -34,7 +34,7 @@ if I want to check for example 69,420:<br>
 ### database
 - use files in \_database_ folder to create tables
 - stop mysql
-- replace .idb files with [this](https://mega.nz/folder/SXoFlZ5b#UB23bmtWT9PmsQs8rsDKHg)*
+- replace .idb files with [these](https://mega.nz/folder/SXoFlZ5b#UB23bmtWT9PmsQs8rsDKHg)*
 - run ```ALTER TABLE nick_data IMPORT TABLESPACE```
 - run ```ALTER TABLE place_data IMPORT TABLESPACE```
 - import [this](https://drive.google.com/drive/folders/1z_SuT7_nsySWtSrca8cwqCTBT6JtBOos) table
