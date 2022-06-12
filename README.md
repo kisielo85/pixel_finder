@@ -21,7 +21,7 @@ the only thing left to do now is to get the hash that occured the most times
 
 ### trophies
 every pixel can get only one first_placer and one final_canvas trophy<br>
-I made a script that checked all the pixels, and made a table showing who got trophies on every pixel<br>
+I made a script that checked all pixels, and made a table showing who got trophies on each one<br>
 ![image](https://user-images.githubusercontent.com/33911808/173190055-456c892d-72d5-45e8-a071-5aec0e44c633.png)
 
 if I want to check for example 69,420:<br>
