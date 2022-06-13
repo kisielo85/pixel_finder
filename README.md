@@ -59,7 +59,7 @@ if you don't want anyone to be able to decode your ip - change those strings:
 - "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"<br>
 in ```finder.py```, ```ip_set.php```
 - "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB" and "CCCCCCCCCCCCCCCCC"<br>
-in ```ip_set.php```, ```result.php```, ```index.php```
+in ```ip_set.php```, ```result.php```, ```raw_result.php```, ```index.php```
 
 <br>
 
@@ -80,3 +80,8 @@ trophies are represented by a list of integers:<br>
 1 - final canvas<br>
 2 - endgame<br>
 
+<br>
+
+if you don't need trophy data, add ```&tr=false``` to the link<br>
+searching this way shouldn't take more than 2 seconds<br>
+http://kisielo85.cba.pl/place2022/raw_result.php?nick=kisielo85&tr=false
