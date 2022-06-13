@@ -86,7 +86,7 @@ def trophy(x,y,hash,dt):
   t="["+t[:-1]+"]"
   return t
 
-def hashToPixels(hash):
+def hashToPixels(hash,tr):
   mydb = mysql.connector.connect(
   host="localhost",
   user=db_user,
@@ -104,14 +104,18 @@ def hashToPixels(hash):
     c=myresult[j][3]
     
     dt=myresult[j][2]
-    t=trophy(x,y,hash,dt)
+    if tr: t=trophy(x,y,hash,dt)
+    else: t="[]"
     myresult[j]=(x,y,dt,c,t)
     j+=1
   return myresult
 
-def f(user):
+def f(user,tr):
   print("user:",user)
-  dir="static/results/data_"+user+".txt"
+  
+  if tr: nm="data_"
+  else: nm="data_notr_"
+  dir="static/results/"+nm+user+".txt"
   h=nickToHash(user)
   file=open(dir,"w")
   if h=="0":
@@ -122,7 +126,7 @@ def f(user):
     file.write(h+".")
     file.close()
 
-    pixels=hashToPixels(h)
+    pixels=hashToPixels(h,tr)
     file=open(dir,"w")
     file.write(h+".")
     for i in pixels:
@@ -131,7 +135,7 @@ def f(user):
     file.write("_end_")
     file.close()
     del pixels
-    print("saved: data_"+user+".txt")
+    print("saved: "+nm+user+".txt")
   del h
   return
   time.sleep(120)
@@ -147,7 +151,12 @@ def b(text):
 
 def webExc(x):
   user = b(x["name"])
-  p = Process(target=f, args=(user,))
+  tr=True
+  try:
+    if x["tr"]=="false": tr=False
+  except:
+    pass
+  p = Process(target=f, args=(user,tr))
   p.start()
   
 def cls():
