@@ -34,8 +34,7 @@ if I want to check for example 69,420:<br>
 ### database
 - import [this](https://drive.google.com/drive/folders/1cD3IyXd4vnQixLowpxU8t1X-6IczwrsZ?usp=sharing) database<br>
 (importing it will take a while)
-
-<br><br>
+<br>
 
 ### website
 - just host somewhere files from \_website_ folder
