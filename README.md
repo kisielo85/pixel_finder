@@ -32,15 +32,9 @@ if I want to check for example 69,420:<br>
 
 ## setup
 ### database
-- use files in \_database_ folder to create tables
-- stop mysql
-- replace .idb files with [these](https://mega.nz/folder/SXoFlZ5b#UB23bmtWT9PmsQs8rsDKHg)*
-- run ```ALTER TABLE nick_data IMPORT TABLESPACE```
-- run ```ALTER TABLE place_data IMPORT TABLESPACE```
-- import [this](https://drive.google.com/drive/folders/1z_SuT7_nsySWtSrca8cwqCTBT6JtBOos) table
+- import [this](https://drive.google.com/drive/folders/1cD3IyXd4vnQixLowpxU8t1X-6IczwrsZ?usp=sharing) database<br>
+(importing it will take a while)
 
-*downloading this 55GB database from mega.nz may take a while, instead you can contact me so I could send it via torrent<br>
-discord: kisielo85#2864
 <br><br>
 
 ### website
