@@ -9,7 +9,7 @@
         {
             $tag=file_get_contents("server_ip_tag.txt");
             $txt=file_get_contents("server_ip.txt");
-            $ip = openssl_decrypt($txt, $cipher, "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB", $options=0, "CCCCCCCCCCCCCCCCC", $tag);
+            $ip = openssl_decrypt($txt, $cipher, "pass_B", $options=0, "pass_C", $tag);
         }
         error_reporting(0);
         $nm="data_";
@@ -45,7 +45,7 @@
             {
                 $tag=file_get_contents("server_ip_tag.txt");
                 $txt=file_get_contents("server_ip.txt");
-                $ip = openssl_decrypt($txt, $cipher, "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB", $options=0, "CCCCCCCCCCCCCCCCC", $tag);
+                $ip = openssl_decrypt($txt, $cipher, "pass_B", $options=0, "pass_C", $tag);
             }
             $tr="true";
             if(isset($_GET['tr']))

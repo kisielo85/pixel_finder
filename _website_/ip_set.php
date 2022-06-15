@@ -1,5 +1,5 @@
 <?php
-    if (isset($_GET['pass']) && $_GET['pass']=="AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" ){                                 
+    if (isset($_GET['pass']) && $_GET['pass']=="pass_A" ){                                 
         $port="";
         if (isset($_GET['port'])) $port=":".$_GET['port'];
         $ip=$_SERVER['REMOTE_ADDR'];
@@ -9,7 +9,7 @@
         if (in_array($cipher, openssl_get_cipher_methods()))
         {
             $tag=0;
-            $ciphertext = openssl_encrypt($ip, $cipher, "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB", $options=0, "CCCCCCCCCCCCCCCCC", $tag);
+            $ciphertext = openssl_encrypt($ip, $cipher, "pass_B", $options=0, "pass_C", $tag);
             file_put_contents("server_ip_tag.txt",$tag);
             file_put_contents("server_ip.txt",$ciphertext);
         }

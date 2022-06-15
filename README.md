@@ -31,6 +31,9 @@ if I want to check for example 69,420:<br>
 <br>
 
 ## setup
+
+you can run setup.py to skip "finder.py" and "additional secuirity" sections
+
 ### database
 - import [this](https://drive.google.com/drive/folders/1cD3IyXd4vnQixLowpxU8t1X-6IczwrsZ?usp=sharing) database<br>
 (this will take a while)
@@ -49,9 +52,9 @@ if I want to check for example 69,420:<br>
 ### additional secuirity
 to correct for the dynamic ip - ```ip_set.php``` updates and hashes it<br>
 if you don't want anyone to be able to decode your ip - change those strings:
-- "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"<br>
+- "pass_A"<br>
 in ```finder.py```, ```ip_set.php```
-- "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB" and "CCCCCCCCCCCCCCCCC"<br>
+- "pass_B" and "pass_C"<br>
 in ```ip_set.php```, ```result.php```, ```raw_result.php```, ```index.php```
 
 <br>
