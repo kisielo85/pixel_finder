@@ -13,13 +13,13 @@ import glob
 
 dev=False
 
-port=2137
-db_user="finder"
-db_pass=""
-website="http://kisielo85.cba.pl/place2022"
+port="333"
+db_user="pooop"
+db_pass="no, thanks"
+website="http://kisielo85.cba.pl/place2023"
 
 if dev:
-  port=2138
+  port="2138"
   website="http://localhost/nick_finder"
   db_user="root"
   db_pass="poopyhead"
@@ -183,7 +183,7 @@ def checkip():
   while(1):
     try:
       URL = website+"/ip_set.php"
-      PARAMS = {'pass':"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA","port":str(port)}
+      PARAMS = {'pass':"pass_A","port":port}
       requests.get(url = URL, params = PARAMS)
     except:
       print("server offline")
@@ -207,4 +207,4 @@ if __name__ == "__main__":
   c.start()
   ip = Process(target=checkip)
   ip.start()
-  app.run(debug=False,host="0.0.0.0",port=port)
+  app.run(debug=False,host="0.0.0.0",port=int(port))
