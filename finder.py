@@ -13,20 +13,23 @@ import glob
 
 dev=False
 
-port="333"
-db_user="pooop"
-db_pass="no, thanks"
-website="http://kisielo85.cba.pl/place2023"
+port="2137"
+db_user="finder"
+db_pass=""
+db_host="localhost"
+website="http://kisielo85.cba.pl/place2022"
+
 
 if dev:
   port="2138"
   website="http://localhost/nick_finder"
-  db_user="root"
-  db_pass="poopyhead"
+  db_host="192.168.1.40"
+  db_user="finder"
+  db_pass=""
 
 def nickToHash(nick):
   mydb = mysql.connector.connect(
-  host="localhost",
+  host=db_host,
   user=db_user,
   password=db_pass,
   database="nick_finder"
@@ -59,11 +62,34 @@ def to_date(x):
   return datetime.strptime(x, '%Y-%m-%d %H:%M:%S.%f')
 end = to_date('2022-04-04 22:47:40.000')
 
+def hashToPixels(hash):
+  mydb = mysql.connector.connect(
+  host=db_host,
+  user=db_user,
+  password=db_pass,
+  database="nick_finder"
+  )
+  mycursor = mydb.cursor()
+  mycursor.execute("select x,y,date,color from place_data where hash='"+hash+"' ORDER BY date")
+  myresult = mycursor.fetchall()
+  mydb.close()
+
+  for j in range(len(myresult)):
+    x=str(myresult[j][0])[1:]
+    y=str(myresult[j][1])[:-1]
+    c=myresult[j][3]
+    dt=myresult[j][2]
+    t="[]"
+    myresult[j]=[x,y,dt,c,t]
+    j+=1
+  
+  return myresult
+
 def trophy(x,y,hash,dt):
   x=int(x)
   y=int(y)
   mydb = mysql.connector.connect(
-  host="localhost",
+  host=db_host,
   user=db_user,
   password=db_pass,
   database="nick_finder"
@@ -82,40 +108,38 @@ def trophy(x,y,hash,dt):
   if dt>end:
     t+="2,"
   
-  
   t="["+t[:-1]+"]"
   return t
 
-def hashToPixels(hash,tr):
-  mydb = mysql.connector.connect(
-  host="localhost",
-  user=db_user,
-  password=db_pass,
-  database="nick_finder"
-  )
-  mycursor = mydb.cursor()
-  mycursor.execute("select x,y,date,color from place_data where hash='"+hash+"' ORDER BY date")
-  myresult = mycursor.fetchall()
-  mydb.close()
+def add_trophies(hash,pixels):
+  for i in range(len(pixels)):
+    e=pixels[i]
+    pixels[i][4]=trophy(e[0],e[1],hash,e[2])
+  return pixels
 
-  for j in range(len(myresult)):
-    x=str(myresult[j][0])[1:]
-    y=str(myresult[j][1])[:-1]
-    c=myresult[j][3]
-    
-    dt=myresult[j][2]
-    if tr: t=trophy(x,y,hash,dt)
-    else: t="[]"
-    myresult[j]=(x,y,dt,c,t)
-    j+=1
-  return myresult
+def save_data(hash,data,dir,end):
+  file=open(dir,"w")
+  file.write(hash+".")
+  for i in data:
+    x,y,d,c,t=i
+    file.write(str(d)+";"+x+";"+y+";"+c+";"+t+".")
+  file.write(end)
+  file.close()
+
+
 
 def f(user,tr):
-  print("user:",user)
-  
-  if tr: nm="data_"
-  else: nm="data_notr_"
+  print("request:",user," tr:",tr)
+  if tr=="false": nm="data_notr_"
+  elif tr=="load": nm="data_loadtr_"
+  else:
+    tr="true"
+    nm="data_"
+    
   dir="static/results/"+nm+user+".txt"
+  if exists(dir):
+    return
+  
   h=nickToHash(user)
   file=open(dir,"w")
   if h=="0":
@@ -126,22 +150,23 @@ def f(user,tr):
     file.write(h+".")
     file.close()
 
-    pixels=hashToPixels(h,tr)
-    file=open(dir,"w")
-    file.write(h+".")
-    for i in pixels:
-      x,y,d,c,t=i
-      file.write(str(d)+";"+x+";"+y+";"+c+";"+t+".")
-    file.write("_end_")
-    file.close()
+    pixels=hashToPixels(h)
+    if tr=="true":
+      pixels=add_trophies(h,pixels)
+      save_data(h,pixels,dir,"_end_")
+
+    elif tr=="false":
+      save_data(h,pixels,dir,"_end_")
+
+    elif tr=="load":
+      save_data(h,pixels,dir,"_processing_")
+      print("saved: "+nm+user+".txt -- part 1")
+      pixels=add_trophies(h,pixels)
+      save_data(h,pixels,dir,"_end_")
+
     del pixels
     print("saved: "+nm+user+".txt")
   del h
-  return
-  time.sleep(120)
-  if exists(dir):
-    os.remove(dir)
-  print(user,"data removed")
 
 def b(text):
   for ch in ['\\','/',':','*','?','"','<','>','|']:
@@ -151,9 +176,9 @@ def b(text):
 
 def webExc(x):
   user = b(x["name"])
-  tr=True
+  tr=""
   try:
-    if x["tr"]=="false": tr=False
+    tr = x["tr"]
   except:
     pass
   p = Process(target=f, args=(user,tr))

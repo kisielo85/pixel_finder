@@ -1,7 +1,7 @@
-<?php   
+<?php
     if (isset($_GET['nick'])){
         $nick=$_GET['nick'];
-
+        
         $raw_data="";
         $ip="";
         $cipher= "aes-128-gcm";
@@ -11,11 +11,14 @@
             $txt=file_get_contents("server_ip.txt");
             $ip = openssl_decrypt($txt, $cipher, "pass_B", $options=0, "pass_C", $tag);
         }
-        error_reporting(0);
         $nm="data_";
-        if(isset($_GET['tr']) && $_GET['tr']=="false"){
-            $nm="data_notr_";
+        if(isset($_GET['tr'])){
+            if($_GET['tr']=="false")
+                $nm="data_notr_";
+            elseif($_GET['tr']=="load")
+                $nm="data_loadtr_";
         }
+        error_reporting(0);
         $raw_data= file_get_contents("http://$ip/static/results/$nm$nick.txt");
         error_reporting(1);
         if ($raw_data != ""){
@@ -24,7 +27,8 @@
             }
             else{
                 $data = explode(".",$raw_data);
-                if($data[count($data)-1]=="_end_")
+                $en=$data[count($data)-1];
+                if($en=="_end_" || $en=="_processing_")
                     echo $raw_data;
                 else
                     echo "processing";

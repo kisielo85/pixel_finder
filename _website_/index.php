@@ -16,12 +16,6 @@
         </div>
     </form>
     <?php
-    session_start();
-    
-        if (isset($_SESSION['loop'])){
-            $_SESSION['loop']=5;
-        }
-
     if (isset($_GET['nick'])){
         if (isset($_SESSION['data']))
             unset($_SESSION['data']);
@@ -32,33 +26,10 @@
         }
         $ch = array('\\','/',':','*','?','"','<','>','|',' ');
         $nick=str_replace($ch,'',$nick);
-
-        $ip="";
-        $cipher= "aes-128-gcm";
-        if (in_array($cipher, openssl_get_cipher_methods()))
-        {
-            $tag=file_get_contents("server_ip_tag.txt");
-            $txt=file_get_contents("server_ip.txt");
-            $ip = openssl_decrypt($txt, $cipher, "pass_B", $options=0, "pass_C", $tag);
-        }
-
-        $postdata = http_build_query(
-            array(
-                'name' => $nick,
-            )
-        );
-        $opts = array('http' =>
-            array(
-                'method' => 'POST',
-                'header' => 'Content-type: application/x-www-form-urlencoded',
-                'content' => $postdata
-            )
-        );
-        $context = stream_context_create($opts);
-        $result = file_get_contents("http://$ip/", false, $context);
-        $_SESSION['nick']=$nick;
+        
         header("Location: result.php?nick=$nick");
     }
     ?>
+    
 </body>
 </html>

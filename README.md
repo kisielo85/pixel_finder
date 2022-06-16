@@ -27,8 +27,7 @@ I made a script that checked all pixels, and made a table showing who got trophi
 if I want to check for example 69,420:<br>
 69*2000+420+1 = 138421<br>
 ![image](https://user-images.githubusercontent.com/33911808/173190190-552777e0-f1bb-4336-9ef8-a4fd585c8bba.png)
-
-<br>
+<br><br>
 
 ## setup
 
@@ -45,26 +44,26 @@ you can run setup.py to skip "finder.py" and "additional secuirity" sections
 
 ### finder.py
 - use requirements.txt to get all the libraries
-- change ```website```, ```db_user``` and ```db_pass``` variables to connect to your website and database
+- change `website`, `db_user` and `db_pass` variables to connect to your website and database
 - run on the same machine as the database
 <br>
 
 ### additional secuirity
-to correct for the dynamic ip - ```ip_set.php``` updates and hashes it<br>
+to correct for the dynamic ip - `ip_set.php` updates and hashes it<br>
 if you don't want anyone to be able to decode your ip - change those strings:
 - "pass_A"<br>
-in ```finder.py```, ```ip_set.php```
+in `finder.py`, `ip_set.php`
 - "pass_B" and "pass_C"<br>
-in ```ip_set.php```, ```result.php```, ```raw_result.php```, ```index.php```
+in `ip_set.php`, `result.php`, `raw_result.php`, `index.php`
 
 <br>
 
 ## API
 you can get raw data using this link:<br>
 http://kisielo85.cba.pl/place2022/raw_result.php?nick=kisielo85<br>
-the possible outputs are: ```request_send```, ```processing```, ```not_found```<br>
+the possible outputs are: `request_send`, `processing`, `not_found`<br>
 or data, that looks like this:
-```c++
+```
 hash.
 date;x;y;color;[trophies].
 date;x;y;color;[trophies].
@@ -78,6 +77,12 @@ trophies are represented by a list of integers:<br>
 
 <br>
 
-if you don't need trophy data, add ```&tr=false``` to the link<br>
+### &tr=false
+add this to the link if you don't need trophy info<br>
 searching this way shouldn't take more than 2 seconds<br>
 http://kisielo85.cba.pl/place2022/raw_result.php?nick=kisielo85&tr=false
+
+### &tr=load
+it will quickly show pixel without trophies, and end with `_processing_` instead of `_end_`<br>
+then, it will add trophy data, again ending with `_end_`<br>
+http://kisielo85.cba.pl/place2022/raw_result.php?nick=kisielo85&tr=load

@@ -32,7 +32,7 @@ def replace_passwords(old_pass,new_pass):
     replace_string(old_pass[0],new_pass[0],"finder.py")
     replace_string(old_pass[0],new_pass[0],"_website_/ip_set.php")
 
-    for i in ["ip_set.php","result.php","raw_result.php","index.php"]:
+    for i in ["ip_set.php","raw_result.php"]:
         replace_string(old_pass[1],new_pass[1],"_website_/"+i)
         replace_string(old_pass[2],new_pass[2],"_website_/"+i)
 
