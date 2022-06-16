@@ -20,7 +20,7 @@ the only thing left to do now is to get a hash that occured the most times
 <br><br>
 
 ### trophies
-every pixel can get only one first_placer and one final_canvas trophy<br>
+every pixel can have only one first_placer and one final_canvas trophy<br>
 I made a script that checked all pixels, and made a table showing who got trophies on each one<br>
 ![image](https://user-images.githubusercontent.com/33911808/173190055-456c892d-72d5-45e8-a071-5aec0e44c633.png)
 
@@ -54,7 +54,7 @@ if you don't want anyone to be able to decode your ip - change those strings:
 - "pass_A"<br>
 in `finder.py`, `ip_set.php`
 - "pass_B" and "pass_C"<br>
-in `ip_set.php`, `result.php`, `raw_result.php`, `index.php`
+in `ip_set.php`, `raw_result.php`
 
 <br>
 
