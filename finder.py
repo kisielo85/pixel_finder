@@ -19,13 +19,12 @@ db_pass=""
 db_host="localhost"
 website="http://kisielo85.cba.pl/place2022"
 
-
 if dev:
   port="2138"
   website="http://localhost/nick_finder"
-  db_host="192.168.1.40"
-  db_user="finder"
-  db_pass=""
+  db_host="localhost"
+  db_user="root"
+  db_pass="poopyhead"
 
 def nickToHash(nick):
   mydb = mysql.connector.connect(
@@ -85,9 +84,15 @@ def hashToPixels(hash):
   
   return myresult
 
-def trophy(x,y,hash,dt):
-  x=int(x)
-  y=int(y)
+def add_trophies(hash,pixels):
+  q=""
+  L=len(pixels)
+  for i in range(L):
+    pixels[i][4]=''
+    x=int(pixels[i][0])
+    y=int(pixels[i][1])
+    q+=str(x*2000+y+1)+","
+    
   mydb = mysql.connector.connect(
   host=db_host,
   user=db_user,
@@ -95,26 +100,34 @@ def trophy(x,y,hash,dt):
   database="nick_finder"
   )
   mycursor = mydb.cursor()
-  mycursor.execute("select first_placer, final_canvas from trophy_pixels where id="+str(x*2000+y+1))
+  mycursor.execute("select id from trophy_pixels where id in ("+q[:-1]+") and first_placer='"+hash+"'")
+  myresult = mycursor.fetchall()
+  for i in myresult:#frst placer
+    c=i[0]-1
+    x=str(int(c/2000))
+    y=str(c%2000)
+    for j in range(L):
+      if pixels[j][0]==x and pixels[j][1]==y:
+        pixels[j][4]+='0,'
+        break
+  
+  mycursor.execute("select id from trophy_pixels where id in ("+q[:-1]+") and final_canvas='"+hash+"'")
   myresult = mycursor.fetchall()
   mydb.close()
-  i=0
-  t=""
-  for h in myresult[0]:
-    if h==hash:
-     t+=str(i)+","
-    i+=1
-  
-  if dt>end:
-    t+="2,"
-  
-  t="["+t[:-1]+"]"
-  return t
+  for i in myresult:#final canvas
+    c=i[0]-1
+    x=str(int(c/2000))
+    y=str(c%2000)
+    for j in range(L-1, -1, -1):
+      if pixels[j][0]==x and pixels[j][1]==y:
+        pixels[j][4]+='1,'
+        break
 
-def add_trophies(hash,pixels):
-  for i in range(len(pixels)):
-    e=pixels[i]
-    pixels[i][4]=trophy(e[0],e[1],hash,e[2])
+  for i in range(L):#endgame
+    if pixels[i][2]>end:
+      pixels[i][4]+='2,'
+    pixels[i][4]='['+pixels[i][4][:-1]+']'
+  
   return pixels
 
 def save_data(hash,data,dir,end):
@@ -125,8 +138,6 @@ def save_data(hash,data,dir,end):
     file.write(str(d)+";"+x+";"+y+";"+c+";"+t+".")
   file.write(end)
   file.close()
-
-
 
 def f(user,tr):
   print("request:",user," tr:",tr)

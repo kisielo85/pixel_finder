@@ -20,10 +20,9 @@
         }
 
         $nick=$_GET['nick'];
-        echo "<iframe id='ifr' src='raw_result.php?nick=$nick&tr=load' hidden></iframe>";
+        echo "<iframe id='ifr' src='raw_result.php?nick=$nick' hidden></iframe>";
 
         $pfp="";
-        echo "<div id='loading'><h2>loading..</h2><p>the more pixels there are - the longer it will take<p></div>";
         error_reporting(0); #avatar
         $json= file_get_contents("https://www.reddit.com/user/$nick/about.json");
         error_reporting(1);
@@ -46,8 +45,7 @@
         </div>";
         ?>
 
-        <div class="box" id="trophy_loading"><h2>loading trophies..</h2></div>
-        <div class="box" id="trophy_colors" hidden> 
+        <div class="box"> 
             <div class="button">
                 <input type="radio" id="r3" name="set" checked onchange="sset(3)"/>
                 <label for="r3">default</label>
@@ -83,8 +81,6 @@
                 font-=1;
                 ncknm.style.setProperty('font-size',font+"px");
             }
-            
-            document.getElementById("loading").hidden=true
             
             set=0
             const df= [[125,55,70],[75,60,70],[190,70,70],[16,50,70]]
@@ -123,7 +119,7 @@
             }
         </script>
     
-        <div class="box" id="raw_data" hidden>
+        <div class="box">
             <h2>raw data</h2>
             <h3>hash:</h3>
             <div class="code_box">
@@ -228,7 +224,6 @@
 
     </div>
 
-
     <div class='center_div' id="loading_msg"></div>
 
     <?php include("footer.html") ?>
@@ -237,57 +232,47 @@
         function loadmsg(x){
             document.getElementById("loading_msg").innerHTML=x+"<p id='msg'><p><form action='index.php'><input type='submit' value='return' /></form></div>"
         }
-        loadmsg("looking for: <strong>u/"+nick+"</strong>..<br>")
+        loadmsg("looking for: <strong>u/"+nick+"</strong>..<br><p>please stay on this site</p>")
 
-        loadPart=0
+        repeated=0
         data=""
         const circles=document.getElementById("circles")
 
-        pre_trophy_load=true
-        function loadpx(final=false){
-            if (pre_trophy_load || final){
-                pre_trophy_load=false
-                
-                circles.innerHTML=""
-                trophy=[0,0,0]
+        function loadpx(){
+            circles.innerHTML=""
+            trophy=[0,0,0]
 
-                //placing circles
-                for (let i = 1; i < data.length-1; i++) {
-                    data[i]=data[i].split(";")
-                    var d=data[i]
-                    tr=JSON.parse(d[4])
-                    data[i][4]=tr
-                    clss="circle"
-                    for (t of tr){
-                        clss+=" c"+t
-                        trophy[t]+=1
-                    }
-                    circles.innerHTML+="<div class='"+clss+"' style='left: "+(d[1]-12)+"px; top: "+(d[2]-12)+"px;'></div>"
+            //placing circles
+            for (let i = 1; i < data.length-1; i++) {
+                data[i]=data[i].split(";")
+                var d=data[i]
+                tr=JSON.parse(d[4])
+                data[i][4]=tr
+                clss="circle"
+                for (t of tr){
+                    clss+=" c"+t
+                    trophy[t]+=1
                 }
-                document.getElementById("raw_data_hash").innerHTML=data[0]
-                document.getElementById("loading_msg").hidden=true
-                document.getElementById("result").hidden=false
-                raw_data_write()
-                if (final){
-                    document.getElementById("footer").hidden=false
-                    document.getElementById("trophy_colors").hidden=false
-                    document.getElementById("trophy_loading").hidden=true
-                    document.getElementById("raw_data").hidden=false
-                }
-            
-                //numbers on the right
-                document.getElementById("data").innerHTML="placed pixels: "+(data.length-2)+"<br>"
-                dt=["first placer: "+trophy[0],"final canvas: "+trophy[1],"endgame: "+trophy[2]]
-                t=0
-                for (i=0; i<3; i++){
-                    if (trophy[i]!=0){
-                        image.innerHTML+="<div class='circle c"+i+"'style='border-width: 5px; left: 2048px; top: "+(908+100*t)+"px;'></div>"
-                        document.getElementById("data").innerHTML+=dt[i]+"<br>"
-                        t+=1
-                    }
-                    
-                }                
+                circles.innerHTML+="<div class='"+clss+"' style='left: "+(d[1]-12)+"px; top: "+(d[2]-12)+"px;'></div>"
             }
+            document.getElementById("raw_data_hash").innerHTML=data[0]
+            raw_data_write()
+        
+            //numbers on the right
+            document.getElementById("data").innerHTML="placed pixels: "+(data.length-2)+"<br>"
+            dt=["first placer: "+trophy[0],"final canvas: "+trophy[1],"endgame: "+trophy[2]]
+            t=0
+            for (i=0; i<3; i++){
+                if (trophy[i]!=0){
+                    image.innerHTML+="<div class='circle c"+i+"'style='border-width: 5px; left: 2048px; top: "+(908+100*t)+"px;'></div>"
+                    document.getElementById("data").innerHTML+=dt[i]+"<br>"
+                    t+=1
+                }
+                
+                document.getElementById("result").hidden=false
+                document.getElementById("footer").hidden=false
+                document.getElementById("loading_msg").hidden=true
+            }                
         }
 
         function checkData() { //getting stuff from raw_result.php
@@ -297,6 +282,11 @@
             switch (data){
                 case "":
                 case "request_sent":
+                    repeated+=1
+                    if (repeated>2){
+                        loadmsg("database not responding :c<p>wait here or come back later</p>")
+                        console.log("request nr."+repeated)
+                    }
                     break
                 case "processing":
                     loadmsg("<strong>u/"+nick+"</strong> found<br>processing data..<br>")
@@ -307,14 +297,11 @@
                     break
                 default:
                     data=data.split(".")
-                    switch (data[data.length-1]){
-                        case "_end_":
-                            refresh=false
-                            loadpx(true)
-                            break
-                        case "_processing_":
-                            loadpx()
+                    if (data[data.length-1]=="_end_"){
+                        refresh=false
+                        loadpx()
                     }
+                    else repeated+=1
             }
             if (refresh) setTimeout(function() { document.getElementById('ifr').contentWindow.location.reload(); }, 1000);
         }

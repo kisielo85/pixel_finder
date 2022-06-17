@@ -74,15 +74,3 @@ trophies are represented by a list of integers:<br>
 0 - first placer<br>
 1 - final canvas<br>
 2 - endgame<br>
-
-<br>
-
-### &tr=false
-add this to the link if you don't need trophy info<br>
-searching this way shouldn't take more than 2 seconds<br>
-http://kisielo85.cba.pl/place2022/raw_result.php?nick=kisielo85&tr=false
-
-### &tr=load
-it will quickly show pixel without trophies, and end with `_processing_` instead of `_end_`<br>
-then, it will add trophy data, again ending with `_end_`<br>
-http://kisielo85.cba.pl/place2022/raw_result.php?nick=kisielo85&tr=load

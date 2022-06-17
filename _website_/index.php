@@ -26,7 +26,7 @@
         }
         $ch = array('\\','/',':','*','?','"','<','>','|',' ');
         $nick=str_replace($ch,'',$nick);
-        
+
         header("Location: result.php?nick=$nick");
     }
     ?>
