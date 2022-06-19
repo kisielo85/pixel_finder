@@ -34,7 +34,8 @@ if I want to check for example 69,420:<br>
 you can run ``setup.py`` to skip "finder.py" and "additional secuirity" sections
 
 ### database
-- setup mysql, download [files](https://archive.org/details/pixel_finder_2022)
+- setup [mysql](https://dev.mysql.com/downloads/mysql/)
+- download [files](https://archive.org/details/pixel_finder_2022)
 - import ``structure_and_trophies.sql``
 - stop mysql
 - go to your database save location *(C:\ProgramData\MySQL\MySQL Server 8.0\Data\nick_finder  ?)*
