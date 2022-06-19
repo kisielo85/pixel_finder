@@ -31,21 +31,30 @@ if I want to check for example 69,420:<br>
 
 ## setup
 
-you can run setup.py to skip "finder.py" and "additional secuirity" sections
+you can run ``setup.py`` to skip "finder.py" and "additional secuirity" sections
 
 ### database
-- import [this](https://drive.google.com/drive/folders/1cD3IyXd4vnQixLowpxU8t1X-6IczwrsZ?usp=sharing) database<br>
-(this will take a while)
+- setup mysql, download [files](https://archive.org/details/pixel_finder_2022)
+- import ``structure_and_trophies.sql``
+- stop mysql
+- go to your database save location *(C:\ProgramData\MySQL\MySQL Server 8.0\Data\nick_finder  ?)*
+- replace ``place_data.ibd`` and ``nick_data.ibd`` with files in ``db.zip``
+- start mysql and run:
+  ```
+  ALTER TABLE nick_data IMPORT TABLESPACE;
+  ALTER TABLE place_data IMPORT TABLESPACE;
+  ```
+<br>
+
+### finder.py
+- download this repo
+- use requirements.txt to get all the libraries
+- change `website`, `db_user` and `db_pass` variables to connect to your website and database
+- run on the same machine as the database
 <br>
 
 ### website
 - just host somewhere files from \_website_ folder
-<br>
-
-### finder.py
-- use requirements.txt to get all the libraries
-- change `website`, `db_user` and `db_pass` variables to connect to your website and database
-- run on the same machine as the database
 <br>
 
 ### additional secuirity
@@ -54,7 +63,7 @@ if you don't want anyone to be able to decode your ip - change those strings:
 - "pass_A"<br>
 in `finder.py`, `ip_set.php`
 - "pass_B" and "pass_C"<br>
-in `ip_set.php`, `result.php`, `raw_result.php`, `index.php`
+in `ip_set.php`, `raw_result.php`
 
 <br>
 
