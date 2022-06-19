@@ -40,7 +40,9 @@ you can run ``setup.py`` to skip "finder.py" and "additional secuirity" sections
 - stop mysql
 - move ``place_data.ibd`` and ``nick_data.ibd``to your database save location<br>
 *(C:\ProgramData\MySQL\MySQL Server 8.0\Data\nick_finder  ?)*
-- start mysql and run:
+- start mysql
+- in Workbench go to Edit > Preferences > SQL Editor, change connection read timeout interval to 0
+- run:
   ```
   ALTER TABLE nick_data IMPORT TABLESPACE;
   ALTER TABLE place_data IMPORT TABLESPACE;
