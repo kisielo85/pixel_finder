@@ -1,4 +1,5 @@
 from genericpath import exists, isdir
+from pydoc import ispath
 from turtle import distance
 import mysql.connector
 from datetime import date, datetime, timedelta
@@ -25,6 +26,16 @@ if dev:
   db_host="localhost"
   db_user="root"
   db_pass="poopyhead"
+
+
+if not isdir("static"):
+  os.mkdir("static")
+
+if not isdir("static/results"):
+  os.mkdir("static/results")
+
+if not isdir("static/stats.txt"):
+  open("static/stats.txt", 'a').close()
 
 def nickToHash(nick):
   mydb = mysql.connector.connect(
