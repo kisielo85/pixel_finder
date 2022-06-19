@@ -36,11 +36,11 @@ you can run ``setup.py`` to skip "finder.py" and "additional secuirity" sections
 ### database
 - setup [mysql](https://dev.mysql.com/downloads/mysql/)
 - download and unzip [files](https://archive.org/details/pixel_finder_2022)
-- create database, import ``db_structure.sql``
-- import ``trophy_pixels.sql``
+- import ``db_structure.sql`` and ``trophy_pixels.sql``
 - stop mysql
-- move ``place_data.ibd`` and ``nick_data.ibd``to your database save location<br>
+- go to  your database save location<br>
 *(C:\ProgramData\MySQL\MySQL Server 8.0\Data\nick_finder  ?)*
+- replace ``place_data.ibd`` and ``nick_data.ibd``with files from db.zip<br>
 - start mysql
 - in Workbench go to Edit > Preferences > SQL Editor, change connection read timeout interval to 0
 - run:
