@@ -35,8 +35,8 @@ you can run ``setup.py`` to skip "finder.py" and "additional secuirity" sections
 
 ### database
 - setup [mysql](https://dev.mysql.com/downloads/mysql/)
-- run: ``CREATE DATABASE nick_finder;``
 - download and unzip [files](https://archive.org/details/pixel_finder_2022)
+- create database, import ``db_structure.sql``
 - import ``trophy_pixels.sql``
 - stop mysql
 - move ``place_data.ibd`` and ``nick_data.ibd``to your database save location<br>
