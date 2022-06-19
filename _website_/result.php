@@ -5,14 +5,14 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>pixel_finder</title>
-    <link rel="stylesheet" href="style.css?m=13">
+    <link rel="stylesheet" href="style.css?m=14">
 </head>
 <body>   
     <h1 id="js_check">please enable javascript in order for site to work</h1>
     <script>
         document.getElementById("js_check").hidden=true
     </script>
-    <div id="result" hidden>
+    <div id="result" hidden style="width: fit-content;margin: auto;">
         
         <?php
         if (!isset($_GET['nick'])){

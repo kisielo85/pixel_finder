@@ -53,6 +53,8 @@ h2{
     width: fit-content;
     margin: auto;
 }
+@supports (-moz-appearance:none) {.image {margin: -700px -950px -700px -950px;}}
+
 .circle{
     position: absolute;
     height: 21px;
@@ -218,9 +220,11 @@ strong, .timer{
     display: inline-block;
 }
 
-@media (orientation : portrait) {    
+@media (orientation : portrait) {
+    @supports (-moz-appearance:none) {.image { margin: -885px -1215px -885px -1215px; }}
     .image {
         zoom: 0.12;
+        -moz-transform: scale(0.12);
     }
     .box{
         width: 336px;
