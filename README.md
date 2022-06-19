@@ -45,9 +45,8 @@ you can run ``setup.py`` to skip "finder.py" and "additional secuirity" sections
   ALTER TABLE place_data DISCARD TABLESPACE;
   ```
 - stop mysql
-- go to  your database save location<br>
+- move ``place_data.ibd`` and ``nick_data.ibd`` to  your database location<br>
 *(C:\ProgramData\MySQL\MySQL Server 8.0\Data\nick_finder  ?)*
-- replace ``place_data.ibd`` and ``nick_data.ibd``with files from db.zip<br>
 - start mysql
 - in Workbench go to Edit > Preferences > SQL Editor, change connection read timeout interval to 0
 - run:
