@@ -303,8 +303,9 @@
                     }
                     else repeated+=1
             }
-            if (refresh) setTimeout(function() { document.getElementById('ifr').contentWindow.location.reload(); }, 1000);
+            setTimeout(function() { if (refresh) document.getElementById('ifr').contentWindow.location.reload(); }, 1000);
         }
+        checkData();
         var myIframe = document.getElementById('ifr');
             myIframe.addEventListener("load", function() {
             checkData();
