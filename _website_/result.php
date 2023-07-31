@@ -15,16 +15,28 @@
     <div id="result" hidden style="width: fit-content;margin: auto;">
         
         <?php
+        // no nick
         if (!isset($_GET['nick'])){
             header("Location: index.php");
         }
 
         $nick=$_GET['nick'];
-        echo "<iframe id='ifr' src='raw_result.php?nick=$nick' hidden></iframe>";
+        $year="22";
+        if (isset($_GET['year']))
+            $year=$_GET['year'];
 
+        echo "<iframe id='ifr' src='raw_result.php?nick=$nick&year=$year' hidden></iframe>";
+
+        $context = stream_context_create([
+            'http' => [
+                'header' => 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.81 Safari/537.36',
+            ],
+        ]);
+
+        // reddit avatar
         $pfp="";
-        error_reporting(0); #avatar
-        $json= file_get_contents("https://www.reddit.com/user/$nick/about.json");
+        error_reporting(0);
+        $json= file_get_contents("https://www.reddit.com/user/$nick/about.json",false,$context);
         error_reporting(1);
         $img=json_decode($json,true)["data"]["icon_img"];
         $img=substr($img,0,strrpos($img,".")+4);
@@ -37,11 +49,11 @@
             $h="hidden";
         echo "<div class='image' id='image'>
         <div id='circles'></div>
-        <img id='tmpl' src='template.png' alt='template'>
+        <img id='tmpl' src='template$year.png' alt='template'>
         <img $h id='pfp' class='pfp' src='data:image/png;base64,$pfp'/>
         <div id='nickname' class='nickname'>u/$nick</div>
         <div id='data' class='data'></div>
-        <div class='circle' style='border-width: 5px; left: 2048px; top: 808px;'></div>
+        <div class='circle' style='border-width: 5px; margin-left: var(--offset_x); left: 2048px; top: 808px;'></div>
         </div>";
         ?>
 
@@ -163,74 +175,26 @@
 
         </div>
 
-        <script>//raw data stuff
-            rw_dt=[false,true,true]
-            onnly=3
-        
-            function data_gen(html=false){
-                i=0
-                out=""
-                endl="\n"
-                if (html) endl="<br>"
-
-                for (let r = 1; r < data.length-1; r++) {
-                    row=data[r]
-                    if (onnly==3 || row[4].includes(onnly)){
-                        if (html){
-                            i++
-                            if (i>9){
-                                out+="..."
-                                break
-                            }
-                        }
-                        
-                        $coma=false
-                        if (rw_dt[0]){
-                            out+=row[0]
-                            $coma=true
-                        }
-                        if (rw_dt[1]){
-                            if ($coma) out+=","
-                            out+=row[3]
-                            $coma=true
-                        }
-                        if (rw_dt[2]){
-                            if ($coma) out+=","
-                            out+=row[1]+","+row[2]
-                            $coma=true
-                        }
-                        out+=endl;
-                    }
-                }
-                return out
-            }
-            function raw_data_write(){
-                result=document.getElementById("raw_result")
-                result.innerHTML=data_gen(true)
-            }
-            raw_data_write()
-
-            function raw_data(x){
-                rw_dt[x]=document.getElementById("e"+x).checked
-                raw_data_write()
-            }
-
-            function only(x){
-                onnly=x
-                raw_data_write()
-            }                
-
-        </script>
+        <script src="raw_data.js?m=1"></script>
 
     </div>
 
     <div class='center_div' id="loading_msg"></div>
 
     <?php include("footer.html") ?>
+    <canvas hidden id="output" width="2800" height="2000"></canvas>
 
     <script>//data loading stuff
+        const year=<?php echo $year?>;
+        offset_gui=0; offset_x=0; offset_y=0;
+        if (year==23){
+            offset_x=1500; offset_y=1000; offset_gui=1000;
+            root.style.setProperty('--offset_x', '1000px');
+            document.getElementById('output').width=3800
+        }
+
         function loadmsg(x){
-            document.getElementById("loading_msg").innerHTML=x+"<p id='msg'><p><form action='index.php'><input type='submit' value='return' /></form></div>"
+            document.getElementById("loading_msg").innerHTML=x+"<p id='msg'><p><form action='index.php'><input type='hidden' name='year' value=<?php echo $year?>><input type='submit' value='return' /></form></div>"
         }
         loadmsg("looking for: <strong>u/"+nick+"</strong>..<br><p>please stay on this site</p>")
 
@@ -243,28 +207,30 @@
             trophy=[0,0,0]
 
             //placing circles
-            for (let i = 1; i < data.length-1; i++) {
-                data[i]=data[i].split(";")
-                var d=data[i]
-                tr=JSON.parse(d[4])
-                data[i][4]=tr
+            for (d of data.pixels){
+                //console.log(x)
                 clss="circle"
-                for (t of tr){
+                for (t of d.trophy){
                     clss+=" c"+t
-                    trophy[t]+=1
+                    trophy[t]++
                 }
-                circles.innerHTML+="<div class='"+clss+"' style='left: "+(d[1]-12)+"px; top: "+(d[2]-12)+"px;'></div>"
+                if (year==17)
+                    circles.innerHTML+=`<div class='${clss}' style='left: ${d.x*2-12}px; top: ${d.y*2-12}px;'></div>`
+                else
+                    circles.innerHTML+=`<div class='${clss}' style='left: ${d.x-12+offset_x}px; top: ${d.y-12+offset_y}px;'></div>`
             }
-            document.getElementById("raw_data_hash").innerHTML=data[0]
+
+            document.getElementById("raw_data_hash").innerHTML=data.hash
             raw_data_write()
         
             //numbers on the right
-            document.getElementById("data").innerHTML="placed pixels: "+(data.length-2)+"<br>"
+            document.getElementById("data").innerHTML="placed pixels: "+(data.pixels.length)+"<br>"
+
             dt=["first placer: "+trophy[0],"final canvas: "+trophy[1],"endgame: "+trophy[2]]
             t=0
             for (i=0; i<3; i++){
                 if (trophy[i]!=0){
-                    image.innerHTML+="<div class='circle c"+i+"'style='border-width: 5px; left: 2048px; top: "+(908+100*t)+"px;'></div>"
+                    image.innerHTML+="<div class='circle c"+i+"'style='border-width: 5px; margin-left: var(--offset_x); left: 2048px; top: "+(908+100*t)+"px;'></div>"
                     document.getElementById("data").innerHTML+=dt[i]+"<br>"
                     t+=1
                 }
@@ -272,7 +238,7 @@
                 document.getElementById("result").hidden=false
                 document.getElementById("footer").hidden=false
                 document.getElementById("loading_msg").hidden=true
-            }                
+            }
         }
 
         function checkData() { //getting stuff from raw_result.php
@@ -281,27 +247,27 @@
             refresh=true
             switch (data){
                 case "":
-                case "request_sent":
+                case "error":
                     repeated+=1
                     if (repeated>2){
-                        loadmsg("database not responding :c<p>wait here or come back later</p>")
+                        loadmsg("database not responding :c<p>please come back later</p>")
                         console.log("request nr."+repeated)
                     }
-                    break
-                case "processing":
-                    loadmsg("<strong>u/"+nick+"</strong> found<br>processing data..<br>")
                     break
                 case "not_found":
                     loadmsg("<div class='center_div'><strong>u/"+nick+"</strong><br>user not found :c<br>")
                     refresh=false
                     break
                 default:
-                    data=data.split(".")
+                    data = JSON.parse(data)
+                    refresh=false
+                    loadpx()
+                    /*data=data.split(".")
                     if (data[data.length-1]=="_end_"){
                         refresh=false
                         loadpx()
                     }
-                    else repeated+=1
+                    else repeated+=1*/
             }
             setTimeout(function() { if (refresh) document.getElementById('ifr').contentWindow.location.reload(); }, 1000);
         }
@@ -312,97 +278,6 @@
         });
 
     </script>
-    <canvas hidden id="output" width="2800" height="2000"></canvas>
-    <script>//downloading stuff
-        function hslaToHex(h, s, l, o) {
-            o=o*255/100
-            o=o.toString(16).substring(0, 2)
-            l /= 100;
-            const a = s * Math.min(l, 1 - l) / 100;
-            const f = n => {
-                const k = (n + h / 30) % 12;
-                const color = l - a * Math.max(Math.min(k - 3, 9 - k, 1), -1);
-                return Math.round(255 * color).toString(16).padStart(2, '0');
-            };
-            return `#${f(0)}${f(8)}${f(4)}`+o;
-        }
-
-
-        function savepng(){
-            var canvas = document.getElementById('output')
-            ctx = canvas.getContext('2d');
-            template = document.getElementById("tmpl")
-            ctx.drawImage(template, 0, 0);
-
-            profile = document.getElementById("pfp")//avatar
-            ctx.drawImage(profile, 2175, 100, 450, 450);
-
-            ctx.font = "bold "+font+"px Arial";//nickname
-            ctx.fillStyle = "#cfcfcf";
-            ctx.textAlign = "center";
-            ctx.fillText("u/"+nick, 2400, 660);
-
-            ctx.font = "bold 60px Arial";//first/last px
-            ctx.fillStyle = "#cfcfcf";
-            ctx.textAlign = "left";
-            ctx.fillText("placed pixels: "+(data.length-2), 2100, 800);
-
-            ctx.beginPath();//default circle
-            ctx.arc(2070,783,12,0,2*Math.PI);
-            ctx.lineWidth = 5;
-            c=hslaToHex(clr[3][0],100,clr[3][1],clr[3][2])
-            ctx.strokeStyle=c;
-            ctx.stroke();
-
-            t=0
-            for (i=0; i<3; i++){//trophies
-                if (trophy[i]!=0){
-                    ctx.fillText(dt[i], 2100, 900+t*100); //text
-
-                    ctx.beginPath();
-                    ctx.arc(2070,883+t*100,12,0,2*Math.PI); //circles
-                    ctx.lineWidth = 5;
-                    c=hslaToHex(clr[i][0],100,clr[i][1],clr[i][2])
-                    ctx.strokeStyle=c;
-                    ctx.stroke();
-                    t+=1
-                }
-            }
-
-
-            const layers=[3,0,1,2]
-            for (z of layers){
-                for (row of data){
-                    e=3
-                    for (i of row[4]){
-                        e=i
-                    }
-                    if (e==z){
-                        ctx.beginPath();
-                        ctx.arc(row[1],row[2],12,0,2*Math.PI);
-                        ctx.lineWidth = 2;
-                        c=hslaToHex(clr[e][0],100,clr[e][1],clr[e][2])
-                        ctx.strokeStyle=c;
-                        ctx.stroke();
-                    }
-                    
-                }
-            }
-            
-            var image = canvas.toDataURL();
-            var aDownloadLink = document.createElement('a');
-            aDownloadLink.download = 'canvas_'+nick+'.png';
-            aDownloadLink.href = image;
-            aDownloadLink.click();
-        }
-        const names=["_first_placer_","_final_canvas_","_endgame_","_"]
-        function saveRawData() {
-            var blob = new Blob([data_gen()], { type: "text/plain;charset=utf-8" });
-            var aDownloadLink = document.createElement('a');
-            aDownloadLink.download = "data"+names[onnly]+nick+".txt";
-            aDownloadLink.href = window.URL.createObjectURL(blob);
-            aDownloadLink.click();
-        }
-    </script>
+    <script src="downloading.js?m=0"></script>
 </body>
 </html>	

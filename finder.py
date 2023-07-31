@@ -1,194 +1,21 @@
-from genericpath import exists, isdir
-from pydoc import ispath
-from turtle import distance
+from genericpath import isdir
 import mysql.connector
-from datetime import date, datetime, timedelta
+from datetime import datetime, timedelta
 import time
-import requests
-import shutil
 import os
-from flask import Flask, render_template, url_for, request, redirect
-from multiprocessing import Process
-import glob
+from flask import Flask, request
+from threading import Thread
+import json
 
 
 dev=False
 
-port="2137"
-db_user="finder"
-db_pass=""
-db_host="localhost"
-website="http://kisielo85.cba.pl/place2022"
-
-if dev:
-  port="2138"
-  website="http://localhost/nick_finder"
-  db_host="localhost"
-  db_user="root"
-  db_pass="poopyhead"
-
-
-if not isdir("static"):
-  os.mkdir("static")
-
-if not isdir("static/results"):
-  os.mkdir("static/results")
-
-if not isdir("static/stats.txt"):
-  open("static/stats.txt", 'a').close()
-
-def nickToHash(nick):
-  mydb = mysql.connector.connect(
-  host=db_host,
-  user=db_user,
-  password=db_pass,
-  database="nick_finder"
-  )
-  mycursor = mydb.cursor()
-  mycursor.execute("SELECT * FROM nick_data where nick = '"+nick+"' LIMIT 15")
-  myresult = mycursor.fetchall()
-  hashes={"0":0}
-  for r in myresult:
-    d1=r[1]-timedelta(seconds=1)
-    d2=r[1]+timedelta(seconds=3)
-    x=str(r[2])
-    y=str(r[3])
-    q="SELECT hash FROM place_data WHERE '"+str(d1)+"' <= date AND date <= '"+str(d2)+"' AND x LIKE '%"+x+"%' AND y LIKE '%"+y+"%'"
-    mycursor.execute(q)
-    res_h = mycursor.fetchall()
-    for h in res_h:
-      if h[0] in hashes:
-        hashes[h[0]]+=1
-      else:
-        hashes[h[0]]=1
-  mydb.close()
-  maxx="0"
-  for i in hashes:
-    if hashes[i]>hashes[maxx]:
-      maxx=i
-  return maxx
-
-def to_date(x):
-  return datetime.strptime(x, '%Y-%m-%d %H:%M:%S.%f')
-end = to_date('2022-04-04 22:47:40.000')
-
-def hashToPixels(hash):
-  mydb = mysql.connector.connect(
-  host=db_host,
-  user=db_user,
-  password=db_pass,
-  database="nick_finder"
-  )
-  mycursor = mydb.cursor()
-  mycursor.execute("select x,y,date,color from place_data where hash='"+hash+"' ORDER BY date")
-  myresult = mycursor.fetchall()
-  mydb.close()
-
-  for j in range(len(myresult)):
-    x=str(myresult[j][0])[1:]
-    y=str(myresult[j][1])[:-1]
-    c=myresult[j][3]
-    dt=myresult[j][2]
-    t="[]"
-    myresult[j]=[x,y,dt,c,t]
-    j+=1
-  
-  return myresult
-
-def add_trophies(hash,pixels):
-  q=""
-  L=len(pixels)
-  for i in range(L):
-    pixels[i][4]=''
-    x=int(pixels[i][0])
-    y=int(pixels[i][1])
-    q+=str(x*2000+y+1)+","
-    
-  mydb = mysql.connector.connect(
-  host=db_host,
-  user=db_user,
-  password=db_pass,
-  database="nick_finder"
-  )
-  mycursor = mydb.cursor()
-  mycursor.execute("select id from trophy_pixels where id in ("+q[:-1]+") and first_placer='"+hash+"'")
-  myresult = mycursor.fetchall()
-  for i in myresult:#frst placer
-    c=i[0]-1
-    x=str(int(c/2000))
-    y=str(c%2000)
-    for j in range(L):
-      if pixels[j][0]==x and pixels[j][1]==y:
-        pixels[j][4]+='0,'
-        break
-  
-  mycursor.execute("select id from trophy_pixels where id in ("+q[:-1]+") and final_canvas='"+hash+"'")
-  myresult = mycursor.fetchall()
-  mydb.close()
-  for i in myresult:#final canvas
-    c=i[0]-1
-    x=str(int(c/2000))
-    y=str(c%2000)
-    for j in range(L-1, -1, -1):
-      if pixels[j][0]==x and pixels[j][1]==y:
-        pixels[j][4]+='1,'
-        break
-
-  for i in range(L):#endgame
-    if pixels[i][2]>end:
-      pixels[i][4]+='2,'
-    pixels[i][4]='['+pixels[i][4][:-1]+']'
-  
-  return pixels
-
-def save_data(hash,data,dir,end):
-  file=open(dir,"w")
-  file.write(hash+".")
-  for i in data:
-    x,y,d,c,t=i
-    file.write(str(d)+";"+x+";"+y+";"+c+";"+t+".")
-  file.write(end)
-  file.close()
-
-def f(user,tr):
-  print("request:",user," tr:",tr)
-  if tr=="false": nm="data_notr_"
-  elif tr=="load": nm="data_loadtr_"
-  else:
-    tr="true"
-    nm="data_"
-    
-  dir="static/results/"+nm+user+".txt"
-  if exists(dir):
-    return
-  
-  h=nickToHash(user)
-  file=open(dir,"w")
-  if h=="0":
-    file.write("_end_")
-    file.close()
-    print(user,"not found")
-  else:
-    file.write(h+".")
-    file.close()
-
-    pixels=hashToPixels(h)
-    if tr=="true":
-      pixels=add_trophies(h,pixels)
-      save_data(h,pixels,dir,"_end_")
-
-    elif tr=="false":
-      save_data(h,pixels,dir,"_end_")
-
-    elif tr=="load":
-      save_data(h,pixels,dir,"_processing_")
-      print("saved: "+nm+user+".txt -- part 1")
-      pixels=add_trophies(h,pixels)
-      save_data(h,pixels,dir,"_end_")
-
-    del pixels
-    print("saved: "+nm+user+".txt")
-  del h
+config=json.load(open("config.json", 'r'))
+db_user=config['db_user']
+db_pass=config["db_pass"]
+db_host=config["db_host"]
+db_name=config["db_name"]
+DEBUG=config["DEBUG"]
 
 def b(text):
   for ch in ['\\','/',':','*','?','"','<','>','|']:
@@ -196,62 +23,168 @@ def b(text):
       text = text.replace(ch,'')
   return text
 
-def webExc(x):
-  user = b(x["name"])
-  tr=""
-  try:
-    tr = x["tr"]
-  except:
-    pass
-  p = Process(target=f, args=(user,tr))
-  p.start()
-  
+
+def next_hour(dt):
+  dt += timedelta(hours=1)
+  return dt.replace(minute=0, second=0, microsecond=0)
+
+traffic=[0,0,0]
 def cls():
+  nextdate=next_hour(datetime.now())
+  global traffic
   while(1):
-    if os.name == 'nt':
-      os.system('cls')
-    else:
-      os.system('clear')
-    
-    files=glob.glob("static/results/*.txt")
-    count=0
-    for file in files:
-      if datetime.fromtimestamp(os.path.getmtime(file))+timedelta(minutes=10)<datetime.now():
-        count+=1
-        os.remove(file)
-    print("removed",count,"files")
-    file=open("static/stats.txt","a")
-    file.write(str(datetime.now().strftime("%Y-%m-%d %H:%M"))+"  "+str(count)+"\n")
+    now=datetime.now()
+    wait_time=(nextdate-now).total_seconds()
+    print(nextdate)
+
+    print("wait for:",nextdate," - ",wait_time,"s")
+    time.sleep(wait_time)
+
+    file=open('trafficc.txt','a')
+    nextdate=next_hour(nextdate)
+    save=nextdate.strftime("%m.%d %H:%M")+","+str(traffic[0])+","+str(traffic[1])+","+str(traffic[2])+";"
+    print("save:",save)
+    file.write(save)
     file.close()
-    time.sleep(600)
+    
 
-
-def checkip():
-  while(1):
-    try:
-      URL = website+"/ip_set.php"
-      PARAMS = {'pass':"pass_A","port":port}
-      requests.get(url = URL, params = PARAMS)
-    except:
-      print("server offline")
-    time.sleep(30)
+    traffic=[0,0,0]
 
 app = Flask(__name__)
+
+def get_hash(nick,year):
+  db = mysql.connector.connect(host=db_host, user=db_user, password=db_pass, database=db_name)
+  cursor = db.cursor()
+
+  if year=='17':
+    query=f"SELECT hash FROM users17 WHERE username='{nick}'"
+    cursor.execute(query)
+    res=cursor.fetchone()
+    if not res: return (False,False)
+    return (False,res[0])
+  
+  elif year=='22':
+    query=f"SELECT id, hash FROM users22 WHERE username='{nick}'"
+    cursor.execute(query)
+    res=cursor.fetchone()
+    if not res: return (False,False)
+    return (res[0],res[1])
+  
+  elif year=='23':
+    query=f"select date, x, y from data23_scraped where username='{nick}' LIMIT 10"
+    cursor.execute(query)
+    res=cursor.fetchall()
+    if res==[]: return (False,False)
+
+    query="SELECT hash, count(hash) as repeated FROM ("
+    for r in res:
+      date=str(r[0])
+      query+=f"SELECT hash FROM data23 WHERE date >='{date}' AND date < DATE_ADD('{date}', INTERVAL 10 SECOND) and x='\"{r[1]}' and y='{r[2]}\"' UNION ALL "
+    query=query[:-10]+") as subrerer group by hash order by repeated LIMIT 1"
+    cursor.execute(query)
+    res2=cursor.fetchone()
+    db.close()
+    print(query)
+    if not res2: return (False,False)
+    return (False,res2[0])
+      
+
+  else: return (False,False)
+
+
+endgame23=datetime(2023,7,25,19,44)
+def get_pixels(nick,year):
+  
+  id,hash=get_hash(nick,year)
+  if not hash: return False
+
+  out={
+    'hash':hash,
+    'pixels':[]
+  }
+
+  db = mysql.connector.connect(host=db_host, user=db_user, password=db_pass, database=db_name)
+  cursor = db.cursor()
+
+  if year=='17':
+    color_table=['#FFFFFF','#E4E4E4','#888888','#222222','#FFA7D1','#E50000','#E59500','#A06A42','#E5D900','#94E044','#02BE01','#00E5F0','#0083C7','#0000EA','#E04AFF','#820080']
+    query=f"SELECT date, color, x, y, first_placer, final_canvas FROM data17 WHERE hash='{hash}'"
+    cursor.execute(query)
+    res=cursor.fetchall()
+
+    for r in res:
+      tr=[]
+      if r[4]: tr.append(0)
+      if r[5]: tr.append(1)
+      out['pixels'].append({
+        'date':str(r[0]),
+        'color':color_table[r[1]],
+        'x':r[2],
+        'y':r[3],
+        'trophy':tr}
+        )
+    return json.dumps(out)
+
+
+  elif year=='22':
+    query=f"SELECT date, color, x, y, first_placer, final_canvas, endgame FROM data22 WHERE user_id='{id}'"
+    cursor.execute(query)
+    res=cursor.fetchall()
+    for r in res:
+      tr=[]
+      if r[4]: tr.append(0)
+      if r[5]: tr.append(1)
+      if r[6]: tr.append(2)
+      out['pixels'].append({
+        'date':str(r[0]),
+        'color':'#'+r[1],
+        'x':r[2],
+        'y':r[3],
+        'trophy':tr}
+        )
+    return json.dumps(out)
+    
+  elif year=='23':
+    query=f"SELECT date, color, x, y FROM data23 WHERE hash='{hash}'"
+    cursor.execute(query)
+    res=cursor.fetchall()
+    for r in res:
+      date=str(r[0])
+      tr=[]
+      if r[0] > endgame23:
+        tr.append(2)
+      
+      out['pixels'].append({
+        'date':date,
+        'color':r[1],
+        'x':r[2][1:],
+        'y':r[3][:-1],
+        'trophy':tr}
+        )
+    
+    return json.dumps(out)
+  
+  return False
+
+
 @app.route('/')
-@app.route('/home')
+@app.route('/find/<string:nick>/<string:year>', methods=['GET'])
+def result(nick,year):
+  p=get_pixels(nick,year)
+  if not p: return "not_found"
+  if year=="17": traffic[0]+=1
+  elif year=="22": traffic[1]+=1
+  elif year=="23": traffic[2]+=1
+  print("traffic:",traffic)
+  return p
 
-def home():
-  return render_template("index.html")
-
-@app.route('/',methods=['POST', 'GET'])
-def result():
-  output = request.form.to_dict()
-  webExc(output)
-  return redirect(request.path)
+@app.route('/traffic')
+def stats():
+  file=open("trafficc.txt","r")
+  return file.read()
 
 if __name__ == "__main__":
-  c = Process(target=cls)
+  c = Thread(target=cls)
+  c.daemon=True
   c.start()
-  ip = Process(target=checkip)
-  ip.start()
-  app.run(debug=False,host="0.0.0.0",port=int(port))
+  app.run(debug=False,host="0.0.0.0",port=int(2139))

@@ -1,4 +1,10 @@
 # pixel_finder-place2022
+
+this project is being re-built
+
+updated readme and database files coming soon<br>
+
+<br><br>
 Thanks to [u/opl_](https://www.reddit.com/user/opl_) for sharing his [scraped data](https://www.reddit.com/r/place/comments/txh660/dump_of_the_raw_unprocessed_data_i_collected/) that made the project possible<br>
 also, check out [ShadowLp174](https://github.com/ShadowLp174) and his [discord bot](https://github.com/PRRQRC/pixel-finder-bot) for finding pixels *(in development)*
 <br>
@@ -19,78 +25,9 @@ this data is not as accurate but by roughly comparing pixel cords and dates mult
 the only thing left to do now is to get a hash that occured the most times
 <br><br>
 
-### trophies
-every pixel can get only one first_placer and one final_canvas trophy<br>
-I made a script that checked all pixels, and made a table showing who got trophies on each one<br>
-![image](https://user-images.githubusercontent.com/33911808/173190055-456c892d-72d5-45e8-a071-5aec0e44c633.png)
-
-if I want to check for example 69,420:<br>
-69*2000+420+1 = 138421<br>
-![image](https://user-images.githubusercontent.com/33911808/173190190-552777e0-f1bb-4336-9ef8-a4fd585c8bba.png)
-<br><br>
-
-## setup
-
-you can run ``setup.py`` to skip "finder.py" and "additional secuirity" sections
-
-### database
-- setup [mysql](https://dev.mysql.com/downloads/mysql/)
-- download and unzip [files](https://archive.org/details/pixel_finder_2022)
-- run: ``CREATE DATABASE nick_finder;``
-- import ``db_structure.sql`` and ``trophy_pixels.sql``
-- run:
-  ```
-  USE nick_finder;
-  ALTER TABLE nick_data DISCARD TABLESPACE;
-  ALTER TABLE place_data DISCARD TABLESPACE;
-  ```
-- stop mysql
-- move ``place_data.ibd`` and ``nick_data.ibd`` to  your database location<br>
-*(C:\ProgramData\MySQL\MySQL Server 8.0\Data\nick_finder  ?)*
-- start mysql
-- in Workbench go to Edit > Preferences > SQL Editor, change connection read timeout interval to 0
-- run:
-  ```
-  USE nick_finder;
-  ALTER TABLE nick_data IMPORT TABLESPACE;
-  ALTER TABLE place_data IMPORT TABLESPACE;
-  ```
-<br>
-
-### finder.py
-- download this repo
-- use requirements.txt to get all the libraries
-- change `website`, `db_user` and `db_pass` variables to connect to your website and database
-- run on the same machine as the database
-<br>
-
-### website
-- just host somewhere files from \_website_ folder
-<br>
-
-### additional secuirity
-to correct for the dynamic ip - `ip_set.php` updates and hashes it<br>
-if you don't want anyone to be able to decode your ip - change those strings:
-- "pass_A"<br>
-in `finder.py`, `ip_set.php`
-- "pass_B" and "pass_C"<br>
-in `ip_set.php`, `raw_result.php`
-
 <br>
 
 ## API
+
 you can get raw data using this link:<br>
-http://kisielo85.cba.pl/place2022/raw_result.php?nick=kisielo85<br>
-the possible outputs are: `request_send`, `processing`, `not_found`<br>
-or data, that looks like this:
-```
-hash.
-date;x;y;color;[trophies].
-date;x;y;color;[trophies].
-date;x;y;color;[trophies].
-_end_
-```
-trophies are represented by a list of integers:<br>
-0 - first placer<br>
-1 - final canvas<br>
-2 - endgame<br>
+http://kisielo85.cba.pl/place2022/raw_result.php?nick=kisielo85?year=23<br>
