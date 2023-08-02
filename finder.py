@@ -15,7 +15,6 @@ db_user=config['db_user']
 db_pass=config["db_pass"]
 db_host=config["db_host"]
 db_name=config["db_name"]
-DEBUG=config["DEBUG"]
 
 def b(text):
   for ch in ['\\','/',':','*','?','"','<','>','|']:
@@ -80,11 +79,11 @@ def get_hash(nick,year):
     for r in res:
       date=str(r[0])
       query+=f"SELECT hash FROM data23 WHERE date >='{date}' AND date < DATE_ADD('{date}', INTERVAL 10 SECOND) and x='\"{r[1]}' and y='{r[2]}\"' UNION ALL "
-    query=query[:-10]+") as subrerer group by hash order by repeated LIMIT 1"
+    query=query[:-10]+") as subrerer group by hash order by repeated desc LIMIT 1"
+    print(query)
     cursor.execute(query)
     res2=cursor.fetchone()
     db.close()
-    print(query)
     if not res2: return (False,False)
     return (False,res2[0])
       
@@ -145,22 +144,43 @@ def get_pixels(nick,year):
     return json.dumps(out)
     
   elif year=='23':
-    query=f"SELECT date, color, x, y FROM data23 WHERE hash='{hash}'"
-    cursor.execute(query)
+    cursor.execute(f"SELECT x,y from trophies_23 WHERE first_placer='{hash}'")
+    first_placer=cursor.fetchall()
+
+    cursor.execute(f"SELECT date, color, x, y FROM data23 WHERE hash='{hash}' order by date")
     res=cursor.fetchall()
     for r in res:
-      date=str(r[0])
       tr=[]
+
+      # first_placer trophy
+      for p in first_placer:
+        if int(r[2][1:])==p[0] and int(r[3][:-1])==p[1]:
+          first_placer.remove(p)
+          tr.append(0)
+          break
+      
       if r[0] > endgame23:
         tr.append(2)
       
       out['pixels'].append({
-        'date':date,
+        'date':str(r[0]),
         'color':r[1],
         'x':r[2][1:],
         'y':r[3][:-1],
         'trophy':tr}
         )
+    
+    # final_canvas trophy
+    cursor.execute(f"SELECT x,y from trophies_23 WHERE final_canvas='{hash}'")
+    final_canvas=cursor.fetchall()
+
+    for r in range(len(out['pixels'])-1,-1,-1):
+      px=out['pixels'][r]
+      for p in final_canvas:
+        if int(px['x'])==p[0] and int(px['y'])==p[1]:
+          px['trophy'].append(1)
+          final_canvas.remove(p)
+          break
     
     return json.dumps(out)
   

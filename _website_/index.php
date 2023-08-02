@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>pixel_finder</title>
-    <link rel="stylesheet" href="style.css?m=16">
+    <link rel="stylesheet" href="style.css?m=16">     
 </head>
 <body>
     <?php
@@ -44,11 +44,24 @@
     ?>
 
     <div class="box" style="text-align: left;">
+        <h3>updates</h3><br>
+        30.07.2023: fixed the savePNG button<br>
+        01.08.2023: trophies for place2023 are now working<br>
+        01.08.2023: improved 2023 matching
+        <p>you can check what I'm currently working on here:<br><a href="https://trello.com/b/vH66AXR5/pixelfinder">trello.com/b/vH66AXR5/pixelfinder</a></p>
+    </div>
+
+    <div class="box" style="text-align: left;">
         <h3>reddit is killing third party apps and itself.</h3><br>
         reddit changes its policy and from now on the API is paid, which means the death of many applications such as apollo, infinity and boost etc, these were often open source applications that created a new clearer look, no ads and other features.<br><br>
         <h4><a href="https://www.reddit.com/r/Save3rdPartyApps/">r/Save3rdPartyApps</a><h4>
         
     </div>
- 
+    
+    <div class="box">
+        <h3>(advertisement)</h3><br>
+        <iframe sandbox="allow-same-origin allow-scripts allow-popups allow-forms" src="advert.html" frameborder="0" style="width:350px; height:300px; border:none"></iframe>
+    </div>
+    
 </body>
 </html>
