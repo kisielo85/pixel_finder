@@ -80,7 +80,7 @@ def get_hash(nick,year):
       date=str(r[0])
       query+=f"SELECT hash FROM data23 WHERE date >='{date}' AND date < DATE_ADD('{date}', INTERVAL 10 SECOND) and x='\"{r[1]}' and y='{r[2]}\"' UNION ALL "
     query=query[:-10]+") as subrerer group by hash order by repeated desc LIMIT 1"
-    print(query)
+
     cursor.execute(query)
     res2=cursor.fetchone()
     db.close()
@@ -142,45 +142,34 @@ def get_pixels(nick,year):
         'trophy':tr}
         )
     return json.dumps(out)
-    
+  
   elif year=='23':
-    cursor.execute(f"SELECT x,y from trophies_23 WHERE first_placer='{hash}'")
-    first_placer=cursor.fetchall()
+    cursor.execute(f"""SELECT date, color, data23.x, data23.y,
+    CASE WHEN tr.first_placer=hash AND ROW_NUMBER() OVER(PARTITION BY data23.x, data23.y ORDER BY date desc)=1 THEN TRUE ELSE FALSE END AS first_placer,
+    CASE WHEN tr.final_canvas=hash AND ROW_NUMBER() OVER(PARTITION BY data23.x, data23.y ORDER BY date)=1 THEN TRUE ELSE FALSE END AS final_canvas,
+    CASE WHEN date > '2023-07-25 19:44:00' THEN TRUE ELSE FALSE END AS endgame
+    FROM data23
+    LEFT JOIN (
+      SELECT * FROM trophies_23 where
+        first_placer='{hash}' or
+        final_canvas='{hash}'
+    ) as tr
+    ON CONCAT('"',tr.x)=data23.x and CONCAT(tr.y,'"')=data23.y
+    WHERE hash = '{hash}';""")
 
-    cursor.execute(f"SELECT date, color, x, y FROM data23 WHERE hash='{hash}' order by date")
     res=cursor.fetchall()
     for r in res:
       tr=[]
-
-      # first_placer trophy
-      for p in first_placer:
-        if int(r[2][1:])==p[0] and int(r[3][:-1])==p[1]:
-          first_placer.remove(p)
-          tr.append(0)
-          break
-      
-      if r[0] > endgame23:
-        tr.append(2)
-      
+      if r[4]: tr.append(0)
+      if r[5]: tr.append(1)
+      if r[6]: tr.append(2)
       out['pixels'].append({
         'date':str(r[0]),
-        'color':r[1],
-        'x':r[2][1:],
-        'y':r[3][:-1],
+        'color':'#'+r[1],
+        'x':int(r[2][1:]),
+        'y':int(r[3][:-1]),
         'trophy':tr}
-        )
-    
-    # final_canvas trophy
-    cursor.execute(f"SELECT x,y from trophies_23 WHERE final_canvas='{hash}'")
-    final_canvas=cursor.fetchall()
-
-    for r in range(len(out['pixels'])-1,-1,-1):
-      px=out['pixels'][r]
-      for p in final_canvas:
-        if int(px['x'])==p[0] and int(px['y'])==p[1]:
-          px['trophy'].append(1)
-          final_canvas.remove(p)
-          break
+      )
     
     return json.dumps(out)
   

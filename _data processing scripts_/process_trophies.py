@@ -1,15 +1,14 @@
 import mysql.connector
-from PIL import Image
-from datetime import datetime, timedelta
-import pickle
+import datetime
+
 
 db_user="k85"
-db_pass="password"
-db_host="localhost"
+db_pass=""
+db_host=""
 db_name="place2022"
 
 #canvas size
-canvas_x=3000
+canvas_x=2000
 canvas_y=2000
 
 #--------------------------
@@ -36,27 +35,18 @@ def eeta(pr):
     print(round(pr * 100, 2), "%\tETA:  ", days, "d  ", hours, "h  ", minutes, "m  ", seconds, "s",sep='')
 #--------------------------
 
-
-def save_progress(c,x):
-    with open(f"progress_{x}.pkl", 'wb') as file:
-        pickle.dump(c, file)
-
-def load_progress(x):
-    with open(f"progress_{x}.pkl", 'rb') as file:
-        return pickle.load(file)
-
 print("loading array")
 first_canvas = [[False for i in range(canvas_x)] for j in range(canvas_y)]
 final_canvas = [[False for i in range(canvas_x)] for j in range(canvas_y)]
-#canvas=load_progress("00_final")
 print("loaded")
 
 db = mysql.connector.connect(host=db_host, user=db_user, password=db_pass, database=db_name)
 cursor = db.cursor()
 
-cursor.execute("select date, x+1500, y+1000, hash from data23 where date < '2023-07-25 19:44:00';")
+#cursor.execute("select date, x+1500, y+1000, hash from data23 where date < '2023-07-25 19:44:00';") #2023
+cursor.execute("select date, x, y, hash from 2022_official where date < '2023-07-25 19:44:00';") #2022
 row = cursor.fetchone()
-print(row)
+
 count=0;count2=0
 print("loop brr")
 while row is not None:
@@ -69,47 +59,39 @@ while row is not None:
         final_canvas[y][x]=[date,hash]
 
     count+=1
-    if count>500000:
-        count=0;count2+=500000
-        eeta(count2/132224375)
+    if count>100000:
+        count=0;count2+=100000
+        #eeta(count2/132224375) #2023
+        eeta(count2/160353085) #2022
+        
     row = cursor.fetchone()
 
 print("saving..")
-save_progress(final_canvas,"23_final")
-save_progress(first_canvas,"23_first")
 
-file_first=open("first_placer23.csv",'w')
-file_final=open("final_canvas23.csv",'w')
-file_trophies=open("23_trophies.csv",'w')
+file_trophies=open("2022_trophy.csv",'w')
 
 eta=[]
+count=0
 for y in range(canvas_y):
-    eeta(y/canvas_y)
+    if y%50==0:
+        eeta(y/canvas_y)
+    
     for x in range(canvas_x):
-        file_first.write(f"{x-1500},{y-1000},")
-        file_final.write(f"{x-1500},{y-1000},")
-        file_trophies.write(f"{x-1500},{y-1000},")
+        #file_trophies.write(f"{x-1500},{y-1000},") #2023
+        file_trophies.write(f"{x},{y},") #2022
 
         if first_canvas[y][x]:
-            file_first.write(first_canvas[y][x][1])
             file_trophies.write(first_canvas[y][x][1]+',')
         else:
-            file_first.write("_")
             file_trophies.write("_,")
 
         if final_canvas[y][x]:
-            file_final.write(final_canvas[y][x][1])
             file_trophies.write(final_canvas[y][x][1])
         else:
-            file_final.write("_")
             file_trophies.write("_")
     
-        file_final.write("\n")
-        file_first.write("\n")
         file_trophies.write("\n")
 
-file_first.close()
-file_final.close()
 file_trophies.close()
 
 

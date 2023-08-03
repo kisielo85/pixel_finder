@@ -1,6 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-HVG835GHS8"></script>
+    <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-HVG835GHS8');
+    </script>
+
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2466749636726261" crossorigin="anonymous"></script>
+
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -194,7 +207,7 @@
         }
 
         function loadmsg(x){
-            document.getElementById("loading_msg").innerHTML=x+"<p id='msg'><p><form action='index.php'><input type='hidden' name='year' value=<?php echo $year?>><input type='submit' value='return' /></form></div>"
+            document.getElementById("loading_msg").innerHTML=x+"<form action='index.php'><input type='hidden' name='year' value=<?php echo $year?>><input type='submit' value='return' /></form></div>"
         }
         loadmsg("looking for: <strong>u/"+nick+"</strong>..<br><p>please stay on this site</p>")
 
@@ -234,14 +247,13 @@
                     document.getElementById("data").innerHTML+=dt[i]+"<br>"
                     t+=1
                 }
-                
-                document.getElementById("result").hidden=false
-                document.getElementById("footer").hidden=false
-                document.getElementById("loading_msg").hidden=true
             }
+            document.getElementById("result").hidden=false
+            document.getElementById("footer").hidden=false
+            document.getElementById("loading_msg").hidden=true
         }
-
-        function checkData() { //getting stuff from raw_result.php
+        //getting stuff from raw_result.php
+        function checkData() { 
             out=document.getElementById('out')
             data=document.getElementById('ifr').contentWindow.document.body.innerHTML;
             refresh=true
@@ -249,27 +261,23 @@
                 case "":
                 case "error":
                     repeated+=1
+                    // if refreshing didn't work
                     if (repeated>2){
                         loadmsg("database not responding :c<p>please come back later</p>")
-                        console.log("request nr."+repeated)
                     }
                     break
                 case "not_found":
-                    loadmsg("<div class='center_div'><strong>u/"+nick+"</strong><br>user not found :c<br>")
+                    loadmsg("<strong>u/"+nick+"</strong><br>user not found :c<br>")
                     refresh=false
                     break
                 default:
+                    loadmsg("loading result<br>")
                     data = JSON.parse(data)
                     refresh=false
                     loadpx()
-                    /*data=data.split(".")
-                    if (data[data.length-1]=="_end_"){
-                        refresh=false
-                        loadpx()
-                    }
-                    else repeated+=1*/
             }
-            setTimeout(function() { if (refresh) document.getElementById('ifr').contentWindow.location.reload(); }, 1000);
+            //refreshing the iframe every 10 seconds
+            setTimeout(function() { if (refresh) document.getElementById('ifr').contentWindow.location.reload(); }, 10000);
         }
         checkData();
         var myIframe = document.getElementById('ifr');

@@ -1,5 +1,8 @@
+# this script was used to process data I got from u/scaevolus
+
 from datetime import datetime
 import pytz
+
 # ETA function - used for tracking progress
 from time import time, sleep
 eta=[]
@@ -27,7 +30,7 @@ file=open("230728_pixelhistory-1")
 line=file.readline()
 i=0;count=0
 
-file_out=open("scaevolus_datav2.csv",'w')
+file_out=open("scaevolus_data.csv",'w')
 
 
 while line:
