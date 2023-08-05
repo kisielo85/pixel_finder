@@ -72,7 +72,6 @@ def get_hash(nick,year):
       date=str(r[0])
       query+=f"SELECT hash FROM 2022_official WHERE date >='{date}' AND date < DATE_ADD('{date}', INTERVAL 10 SECOND) and ( x={r[1]} or x={r[1]+1000} ) and ( y={r[2]} or y={r[2]+1000} ) UNION ALL "
     query=query[:-10]+") as subrerer group by hash order by repeated desc LIMIT 1"
-    print(query)
 
     cursor.execute(query)
     res2=cursor.fetchone()
