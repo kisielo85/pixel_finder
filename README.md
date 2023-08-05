@@ -65,4 +65,4 @@ source: just trust me bro<br>
 ## API
 
 you can get raw data using this link:<br>
-http://kisielo85.cba.pl/place/raw_result.php?nick=kisielo85?year=23<br>
+http://kisielo85.cba.pl/place/raw_result.php?nick=kisielo85&year=23<br>
