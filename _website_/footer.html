@@ -16,8 +16,13 @@
         <a href="https://www.reddit.com/r/place/comments/15bjm5o/rplace_2023_data/">2023</a><br><br>
 
        
-        <form action='index.php'><input type='hidden' name='year' value=<?php echo $year?>><input type='submit' value='return' /></form>
+        <form action='index.php'>
+            <input type='hidden' name='year' value='<?php echo $year?>'>
+            <input type='hidden' name='nick' value='<?php echo $nick?>'>
+            <input type='submit' value='return'/>
+        </form>
     </div>
+    
     <footer>
         <div class="ad">✨Shameless Ad✨</div>
         <br>
@@ -33,7 +38,5 @@
             <li>discord: <strong>@kisielo85</strong></li>
         </ul>
         <br><br>
-        <h3>(advertisement)</h3><br>
-        <iframe sandbox="allow-same-origin allow-scripts allow-popups allow-forms" src="advert2.html" frameborder="0" style="width:500px; height:100px; border:none"></iframe>
     </footer>
 </div>

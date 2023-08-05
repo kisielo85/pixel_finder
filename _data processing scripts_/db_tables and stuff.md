@@ -19,4 +19,4 @@ create index idx_username on 2022_official (username);
 create table 2022_trophy(x int,y int,first_placer varchar(88),final_canvas varchar(88));
 LOAD DATA INFILE '/tmp/2022_trophy.csv' INTO TABLE 2022_trophy FIELDS TERMINATED BY ',';
 create index idx_first_placer on 2022_trophy(first_placer);
-create index idx_final_canvas on 2022_trophy (final_canvas);
+create index idx_final_canvas on 2022_trophy(final_canvas);

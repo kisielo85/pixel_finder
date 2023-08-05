@@ -1,11 +1,12 @@
 import mysql.connector
 import datetime
+import json
 
-
-db_user="k85"
-db_pass=""
-db_host=""
-db_name="place2022"
+config=json.load(open("config.json", 'r'))
+db_user=config['db_user']
+db_pass=config["db_pass"]
+db_host=config["db_host"]
+db_name=config["db_name"]
 
 #canvas size
 canvas_x=2000
@@ -44,7 +45,7 @@ db = mysql.connector.connect(host=db_host, user=db_user, password=db_pass, datab
 cursor = db.cursor()
 
 #cursor.execute("select date, x+1500, y+1000, hash from data23 where date < '2023-07-25 19:44:00';") #2023
-cursor.execute("select date, x, y, hash from 2022_official where date < '2023-07-25 19:44:00';") #2022
+cursor.execute("select date, x, y, hash from 2022_official where date < '2022-04-04 22:47:40';") #2022
 row = cursor.fetchone()
 
 count=0;count2=0

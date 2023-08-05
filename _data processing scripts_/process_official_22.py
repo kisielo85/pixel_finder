@@ -1,5 +1,3 @@
-#160353102
-
 #--------------------------
 # ETA function - used for tracking progress
 from time import time, sleep
