@@ -4,7 +4,7 @@ this project is being re-built, you can check what I'm working on on my [trello 
 
 database files coming soon<br>
 
-## Data used<br><br>
+## Data used
 
 official datasets: [2017](https://www.reddit.com/r/redditdata/comments/6640ru/place_datasets_april_fools_2017/) / [2022](https://www.reddit.com/r/place/comments/txvk2d/rplace_datasets_april_fools_2022/) / [2023](https://www.reddit.com/r/place/comments/15bjm5o/rplace_2023_data/)
 
@@ -17,59 +17,53 @@ scraped data:
 
 ### finding hashes
 
-the official dataset contains all data about pixels<br>
+<br>
+
+the official dataset contains all data about pixels
 the thing is - you can't see who placed the pixel, there is only a hash that can't be reversed<br>
-(image)
+![](assets/20230805_202401_finding_hashes_1.png)
 
 but by using scraped data, that was collected during the event - there is a chance to find a few of your pixels<br>
-(image)
+![](assets/20230805_202421_finding_hashes_2.png)
 
 this data is not as accurate but by roughly comparing it to the official one, you get a list of possible hashes<br>
-(image)
+![](assets/20230805_202429_finding_hashes_3.png)
 
-<br>
-the only thing left to do now is to get a hash that occured the most times
-<br><br>
+the only thing left to do now is to get a hash that occured the most times<br>
+![](assets/20230805_202445_finding_hashes_4.png)
 
 ### trophies
 
 endgame is by far the easiest to calculate, just check if the pixel was placed after the whiteout started
-(image)
+
+![](assets/20230805_204445_trophy_1.png)
 
 first placer and final canvas are a different story.
-this script: `/_data processing scripts_/process_trophies.py` goes through every pixel placement, and for every coordinate saves first and last users that have been there
-(image)
+this script: `/_data processing scripts_/process_trophies.py` goes through every pixel placement, and for every coordinate saves first and last users that have been there<br>
+![](assets/20230805_205553_trophy_2.png)
 
-now we can connect add trophies to the query for getting pixels
-(image)
-
-one more thing worth noting is this case:
-(image)
-if someone placed multiple pixels in the same X Y, all of them get the trophy
-
-to fix this wee need to check if a pixel is the first one on these cords, co It could qualify for first placer trophy
-same goes for final canvas, but in reverse, a pixel has to be the last one
-(image)
-
-so here is the final sql query:
+now we can connect trophies to the query for getting pixels<br>
+![](assets/20230805_204502_trophy_3.png)<br>
+this query also makes sure that only the correct pixel gets the trophy.<br>
+for example: if there are multiple pixels placed on the same cords - only the first one has a chance to get a "first placer" trophy, and only the last one can get the "final canvas"<br><br>
 
 ```sql
-SELECT date, color, data23.x, data23.y,
-CASE WHEN tr.first_placer=hash AND ROW_NUMBER() OVER(PARTITION BY data23.x, data23.y ORDER BY date desc)=1 THEN TRUE ELSE FALSE END AS first_placer,
-CASE WHEN tr.final_canvas=hash AND ROW_NUMBER() OVER(PARTITION BY data23.x, data23.y ORDER BY date)=1 THEN TRUE ELSE FALSE END AS final_canvas,
-CASE WHEN date > '2023-07-25 19:44:00' THEN TRUE ELSE FALSE END AS endgame
-FROM data23
+SELECT date, color, dt.x, dt.y,
+CASE WHEN tr.first_placer=hash AND ROW_NUMBER() OVER(PARTITION BY dt.x, dt.y ORDER BY date desc)=1 THEN TRUE ELSE FALSE END AS first_placer,
+CASE WHEN tr.final_canvas=hash AND ROW_NUMBER() OVER(PARTITION BY dt.x, dt.y ORDER BY date)=1 THEN TRUE ELSE FALSE END AS final_canvas,
+CASE WHEN date > '2022-04-04 22:47:40' THEN TRUE ELSE FALSE END AS endgame
+FROM 2022_official dt
 LEFT JOIN (
-  SELECT * FROM 2023_trophy WHERE
-	first_placer='srHuiEQEJUaUgMM/fJP6H3rJEQzedguA+qX1J87T78l6SlsTKcI1Wo1hvutir8U0YKFVuEUrNRLSOVLD4c93Zg==' OR
-	final_canvas='srHuiEQEJUaUgMM/fJP6H3rJEQzedguA+qX1J87T78l6SlsTKcI1Wo1hvutir8U0YKFVuEUrNRLSOVLD4c93Zg=='
+  SELECT * FROM 2022_trophy WHERE
+	first_placer='Sn8jWuJQG2lTXoMRF1Ns9czd21CgXvPB1GZ4/j5LEYsUlX/RVsFLqyC1e2m1meTaQPilmhrUXkShfdlkuXo+UQ==' OR
+	final_canvas='Sn8jWuJQG2lTXoMRF1Ns9czd21CgXvPB1GZ4/j5LEYsUlX/RVsFLqyC1e2m1meTaQPilmhrUXkShfdlkuXo+UQ=='
 ) as tr
-ON CONCAT('"',tr.x)=data23.x AND CONCAT(tr.y,'"')=data23.y
-WHERE hash = 'srHuiEQEJUaUgMM/fJP6H3rJEQzedguA+qX1J87T78l6SlsTKcI1Wo1hvutir8U0YKFVuEUrNRLSOVLD4c93Zg==';
+ON tr.x=dt.x AND tr.y=dt.y
+WHERE hash = 'Sn8jWuJQG2lTXoMRF1Ns9czd21CgXvPB1GZ4/j5LEYsUlX/RVsFLqyC1e2m1meTaQPilmhrUXkShfdlkuXo+UQ==';
 ```
 
-*yeah, I know the hash is repeated 3 times, it's more efficient this way*
-source: just trust me bro
+*yeah, I know the hash is repeated 3 times, it's more efficient this way*<br>
+source: just trust me bro<br>
 
 ## API
 
