@@ -8,16 +8,14 @@ database files coming soon<br>
 
 official datasets: [2017](https://www.reddit.com/r/redditdata/comments/6640ru/place_datasets_april_fools_2017/) / [2022](https://www.reddit.com/r/place/comments/txvk2d/rplace_datasets_april_fools_2022/) / [2023](https://www.reddit.com/r/place/comments/15bjm5o/rplace_2023_data/)
 
-scraped data:
-2017: [(data)](https://https://archive.org/details/place2017-opl) by [u/opl_](https://www.reddit.com/user/opl_)
-2022: [(data)](https://www.reddit.com/r/redditdata/comments/6640ru/place_datasets_april_fools_2017/) by [u/opl_](https://www.reddit.com/user/opl_)
-2023: [(data)](https://mod.ifies.com/f/230728_pixelhistory.xz) by [u/scaevolus](https://www.reddit.com/user/scaevolus) & [(data)](https://cdn.discordapp.com/attachments/297524632234229761/1133536680373133332/pixels.csv.zst) by [u/nepeat](https://www.reddit.com/u/nepeat/https:/)
+scraped data:<br>
+2017: [(data)](https://https://archive.org/details/place2017-opl) by [u/opl_](https://www.reddit.com/user/opl_)<br>
+2022: [(data)](https://www.reddit.com/r/redditdata/comments/6640ru/place_datasets_april_fools_2017/) by [u/opl_](https://www.reddit.com/user/opl_)<br>
+2023: [(data)](https://mod.ifies.com/f/230728_pixelhistory.xz) by [u/scaevolus](https://www.reddit.com/user/scaevolus) & [(data)](https://cdn.discordapp.com/attachments/297524632234229761/1133536680373133332/pixels.csv.zst) by [u/nepeat](https://www.reddit.com/u/nepeat/https:/)<br>
 
 ## How does it work
 
 ### finding hashes
-
-<br>
 
 the official dataset contains all data about pixels
 the thing is - you can't see who placed the pixel, there is only a hash that can't be reversed<br>
@@ -34,15 +32,14 @@ the only thing left to do now is to get a hash that occured the most times<br>
 
 ### trophies
 
-endgame is by far the easiest to calculate, just check if the pixel was placed after the whiteout started
-
+endgame is by far the easiest to calculate, just check if the pixel was placed after the whiteout started<br>
 ![](assets/20230805_204445_trophy_1.png)
 
-first placer and final canvas are a different story.
+first placer and final canvas are a different story.<br>
 this script: `/_data processing scripts_/process_trophies.py` goes through every pixel placement, and for every coordinate saves first and last users that have been there<br>
 ![](assets/20230805_205553_trophy_2.png)
 
-now we can connect trophies to the query for getting pixels<br>
+using this we can connect trophies to the query for getting pixels<br>
 ![](assets/20230805_204502_trophy_3.png)<br>
 this query also makes sure that only the correct pixel gets the trophy.<br>
 for example: if there are multiple pixels placed on the same cords - only the first one has a chance to get a "first placer" trophy, and only the last one can get the "final canvas"<br><br>
