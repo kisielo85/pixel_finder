@@ -17,7 +17,7 @@ scraped data:<br>
 
 ### finding hashes
 
-the official dataset contains all data about pixels
+the official dataset contains all data about pixels<br>
 the thing is - you can't see who placed the pixel, there is only a hash that can't be reversed<br>
 ![](assets/20230805_202401_finding_hashes_1.png)
 
