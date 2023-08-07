@@ -56,7 +56,7 @@ def get_hash(nick,year):
   cursor = db.cursor()
 
   if year=='17':
-    query=f"SELECT hash FROM users17 WHERE username='{nick}'"
+    query=f"SELECT hash FROM 2017_users WHERE username='{nick}'"
     cursor.execute(query)
     res=cursor.fetchone()
     if not res: return (False,False)
@@ -88,7 +88,7 @@ def get_hash(nick,year):
     query="SELECT hash, count(hash) as repeated FROM ("
     for r in res:
       date=str(r[0])
-      query+=f"SELECT hash FROM data23 WHERE date >='{date}' AND date < DATE_ADD('{date}', INTERVAL 10 SECOND) and x='\"{r[1]}' and y='{r[2]}\"' UNION ALL "
+      query+=f"SELECT hash FROM 2023_official WHERE date >='{date}' AND date < DATE_ADD('{date}', INTERVAL 10 SECOND) and x={r[1]} and y={r[2]} UNION ALL "
     query=query[:-10]+") as subrerer group by hash order by repeated desc LIMIT 1"
 
     cursor.execute(query)
@@ -100,6 +100,7 @@ def get_hash(nick,year):
 
   else: return (False,False)
 
+ENDGAME={'22':'2022-04-04 22:47:40','23':'2023-07-25 19:44:00'}
 def get_pixels(nick,year):
   
   hash,machedPoints=get_hash(nick,year)
@@ -116,7 +117,7 @@ def get_pixels(nick,year):
 
   if year=='17':
     color_table=['#FFFFFF','#E4E4E4','#888888','#222222','#FFA7D1','#E50000','#E59500','#A06A42','#E5D900','#94E044','#02BE01','#00E5F0','#0083C7','#0000EA','#E04AFF','#820080']
-    query=f"SELECT date, color, x, y, first_placer, final_canvas FROM data17 WHERE hash='{hash}'"
+    query=f"SELECT date, color, x, y, first_placer, final_canvas FROM 2017_official WHERE hash='{hash}'"
     cursor.execute(query)
     res=cursor.fetchall()
 
@@ -132,21 +133,20 @@ def get_pixels(nick,year):
         'trophy':tr}
         )
     return json.dumps(out)
-
-
-  elif year=='22':
-    cursor.execute(f"""SELECT date, color, 2022_official.x, 2022_official.y,
-    CASE WHEN tr.first_placer=hash AND ROW_NUMBER() OVER(PARTITION BY 2022_official.x, 2022_official.y ORDER BY date desc)=1 THEN TRUE ELSE FALSE END AS first_placer,
-    CASE WHEN tr.final_canvas=hash AND ROW_NUMBER() OVER(PARTITION BY 2022_official.x, 2022_official.y ORDER BY date)=1 THEN TRUE ELSE FALSE END AS final_canvas,
-    CASE WHEN date > '2022-04-04 22:47:40' THEN TRUE ELSE FALSE END AS endgame
-    FROM 2022_official
+  
+  elif year in ['22','23']:
+    cursor.execute(f"""SELECT date, color, dt.x, dt.y,
+    CASE WHEN tr.first_placer=hash AND ROW_NUMBER() OVER(PARTITION BY dt.x, dt.y ORDER BY date desc)=1 THEN TRUE ELSE FALSE END AS first_placer,
+    CASE WHEN tr.final_canvas=hash AND ROW_NUMBER() OVER(PARTITION BY dt.x, dt.y ORDER BY date)=1 THEN TRUE ELSE FALSE END AS final_canvas,
+    CASE WHEN date > '{ENDGAME[year]}' THEN TRUE ELSE FALSE END AS endgame
+    FROM 20{year}_official dt
     LEFT JOIN (
-      SELECT * FROM 2022_trophy where
-        first_placer='{hash}' or
-        final_canvas='{hash}'
+      SELECT * FROM 20{year}_trophy WHERE
+      first_placer='{hash}' OR
+      final_canvas='{hash}'
     ) as tr
-    ON tr.x=2022_official.x and tr.y=2022_official.y
-    WHERE hash = '{hash}';""")
+    ON tr.x=dt.x AND tr.y=dt.y
+    WHERE hash = '{hash}' order by date;""")
 
     res=cursor.fetchall()
     for r in res:
@@ -163,39 +163,49 @@ def get_pixels(nick,year):
         )
     return json.dumps(out)
   
-  elif year=='23':
-    cursor.execute(f"""SELECT date, color, data23.x, data23.y,
-    CASE WHEN tr.first_placer=hash AND ROW_NUMBER() OVER(PARTITION BY data23.x, data23.y ORDER BY date desc)=1 THEN TRUE ELSE FALSE END AS first_placer,
-    CASE WHEN tr.final_canvas=hash AND ROW_NUMBER() OVER(PARTITION BY data23.x, data23.y ORDER BY date)=1 THEN TRUE ELSE FALSE END AS final_canvas,
-    CASE WHEN date > '2023-07-25 19:44:00' THEN TRUE ELSE FALSE END AS endgame
-    FROM data23
-    LEFT JOIN (
-      SELECT * FROM 2023_trophy where
-        first_placer='{hash}' or
-        final_canvas='{hash}'
-    ) as tr
-    ON CONCAT('"',tr.x)=data23.x and CONCAT(tr.y,'"')=data23.y
-    WHERE hash = '{hash}';""")
-
-    res=cursor.fetchall()
-    for r in res:
-      tr=[]
-      if r[4]: tr.append(0)
-      if r[5]: tr.append(1)
-      if r[6]: tr.append(2)
-      out['pixels'].append({
-        'date':str(r[0]),
-        'color':r[1],
-        'x':int(r[2][1:]),
-        'y':int(r[3][:-1]),
-        'trophy':tr}
-      )
-    
-    return json.dumps(out)
-  
   return False
 
+def get_nick(hash, year):
+  if year!='23': return
 
+  db = mysql.connector.connect(host=db_host, user=db_user, password=db_pass, database=db_name)
+  src_cursor = db.cursor()
+
+  db2 = mysql.connector.connect(host=db_host, user=db_user, password=db_pass, database=db_name)
+  search_cursor = db2.cursor()
+
+  src_cursor.execute(f"select date, x, y from 2023_official where hash='{hash}'")
+  src_res=src_cursor.fetchmany(5)
+
+  matched=0
+  src_found=0
+  best=False
+  maybe={}
+  while src_res and matched<10:
+    src_found+=len(src_res)
+
+    query="SELECT username, count(username) as repeated FROM("
+    for r in src_res:
+      date=str(r[0])
+      query+=f"SELECT username FROM 2023_scraped WHERE date > DATE_SUB('{date}', INTERVAL 10 SECOND) AND date <= '{date}' and x={r[1]} and y={r[2]} UNION ALL "
+    query=query[:-10]+") as subrerer group by username order by repeated desc"
+
+    search_cursor.execute(query)
+    search_res=search_cursor.fetchall()
+
+    for r in search_res:
+      if not r[0] in maybe:
+        maybe[r[0]]=r[1]
+      else:
+        maybe[r[0]]+=r[1]
+    
+    if maybe:
+      best = max(maybe, key=lambda x: maybe[x])
+      matched=maybe[best]
+    
+    src_res=src_cursor.fetchmany(5)
+  
+  return f"{matched}/{src_found}",best
 
 @app.route('/')
 @app.route('/find/<string:nick>/<string:year>', methods=['GET'])

@@ -1,8 +1,14 @@
 # pixel finder
 
-this project is being re-built, you can check what I'm working on on my [trello board](https://trello.com/b/vH66AXR5/pixelfinderhttps:/)
+http://kisielo85.cba.pl/place/
 
-database files coming soon<br>
+* [Data used](#data-used)
+* [How does it work](#how-does-it-work)
+* [Database](#database)
+* ["user not found" ?](#user-not-found)
+* [API](#api)
+
+this project is being re-built, you can check what I'm working on on my [trello board](https://trello.com/b/vH66AXR5/pixelfinderhttps:/)<br><br>
 
 ## Data used
 
@@ -11,7 +17,9 @@ official datasets: [2017](https://www.reddit.com/r/redditdata/comments/6640ru/pl
 scraped data:<br>
 2017: [(data)](https://https://archive.org/details/place2017-opl) by [u/opl_](https://www.reddit.com/user/opl_)<br>
 2022: [(data)](https://www.reddit.com/r/redditdata/comments/6640ru/place_datasets_april_fools_2017/) by [u/opl_](https://www.reddit.com/user/opl_)<br>
-2023: [(data)](https://mod.ifies.com/f/230728_pixelhistory.xz) by [u/scaevolus](https://www.reddit.com/user/scaevolus) & [(data)](https://cdn.discordapp.com/attachments/297524632234229761/1133536680373133332/pixels.csv.zst) by [u/nepeat](https://www.reddit.com/u/nepeat/https:/)<br>
+2023: [(data)](https://mod.ifies.com/f/230728_pixelhistory.xz) by [u/scaevolus](https://www.reddit.com/user/scaevolus) & [(data)](https://cdn.discordapp.com/attachments/297524632234229761/1133536680373133332/pixels.csv.zst) by [u/nepeat](https://www.reddit.com/u/nepeat/https:/)
+
+for processed data and database structure, go to [Database](#database) section<br><br>
 
 ## How does it work
 
@@ -60,9 +68,131 @@ WHERE hash = 'Sn8jWuJQG2lTXoMRF1Ns9czd21CgXvPB1GZ4/j5LEYsUlX/RVsFLqyC1e2m1meTaQP
 ```
 
 *yeah, I know the hash is repeated 3 times, it's more efficient this way*<br>
-source: just trust me bro<br>
+source: just trust me bro<br><br>
+
+## Database
+
+these are the database tables along with their row counts:
+
+* 2017_official - ``16559897``
+* 2017_users - ``1101042``
+* 2022_official - ``160353085``
+* 2022_scraped - ``114492522``
+* 2022_trophy - ``4000000``
+* 2023_official - ``132193709``
+* 2023_scraped - ``74783143``
+* 2023_trophy - ``6000000``
+
+(here will be a link to the .csv files)<br>
+(I'm currently uploading them to archive.org)<br>
+
+note:<br>
+this project focuses on analysing user data,<br>
+so the data does not contain admin rectangles etc.<br><br>
+
+### **table structure**
+
+<br>
+
+2017<br>
+
+```sql
+CREATE TABLE 2017_official (
+	date DATETIME,
+	hash VARCHAR(30),
+	x INT,
+	y INT,
+	color SMALLINT,
+	first_placer BOOL,
+	final_canvas BOOL 
+);
+
+CREATE TABLE 2017_users (
+	username VARCHAR(20),
+	hash VARCHAR(30)
+);
+```
+
+<br>
+
+2022 / 2023<br>
+
+```sql
+CREATE TABLE 2023_official (
+	date DATETIME,
+	x INT,
+	y INT,
+	color VARCHAR(6),
+	hash VARCHAR(88)
+);
+
+CREATE TABLE 2023_scraped (
+	date DATETIME,
+	x INT,
+	y INT,
+	color VARCHAR(6),
+	username VARCHAR(20)
+);
+
+CREATE TABLE 2023_trophy (
+	x INT,
+	y INT,
+	first_placer VARCHAR(88),
+	final_canvas VARCHAR(88)
+);
+```
+
+### **data import**
+
+```sql
+LOAD DATA INFILE '/tmp/2017_official.csv'
+INTO TABLE 2017_official
+FIELDS TERMINATED BY ',';
+```
+
+this works for every table, just change the file path and table name<br><br>
+
+## "user not found" ?
+
+well, since the project relies on unofficial datasets, it just happens.<br>
+basically - the more pixels you've placed, the higher the chance of them being in unofficial datasets, and that translates to a better chanse of getting the correct result<br>
+read more in the [How does it work](#how-does-it-work) section<br><br>
 
 ## API
 
 you can get raw data using this link:<br>
 http://kisielo85.cba.pl/place/raw_result.php?nick=kisielo85&year=23<br>
+
+the possible outputs are:<br>
+``error`` - the server is offline, or something went wrong<br>
+``not found`` - user is not in the unofficial dataset<br>
+
+or data, that looks like this:
+
+```json
+{
+	"hash": "KPIBp4LmRbnZNmInoufhDvNJdHwhskaB72VWY6BKy5nygN9XE6n2r/XqncgPkvl5VlZTCeiX97x+YOLh+ZF+YQ==",
+
+	"pixels":[
+		{
+			"date":
+			"2023-07-25 12:14:13",
+			"color": "#D4D7D9",
+			"x": 777,
+			"y": -89,
+			"trophy": [1]
+		},
+		{
+			"date": "2023-07-25 12:18:22",
+			"color": "#000000",
+			"x": 776,
+			"y": -103,
+			"trophy": []
+		}
+	]
+}
+```
+trophies are represented by an array of integers:<br>
+0 - first placer<br>
+1 - final canvas<br>
+2 - endgame<br>
