@@ -60,8 +60,8 @@ CASE WHEN date > '2022-04-04 22:47:40' THEN TRUE ELSE FALSE END AS endgame
 FROM 2022_official dt
 LEFT JOIN (
   SELECT * FROM 2022_trophy WHERE
-	first_placer='Sn8jWuJQG2lTXoMRF1Ns9czd21CgXvPB1GZ4/j5LEYsUlX/RVsFLqyC1e2m1meTaQPilmhrUXkShfdlkuXo+UQ==' OR
-	final_canvas='Sn8jWuJQG2lTXoMRF1Ns9czd21CgXvPB1GZ4/j5LEYsUlX/RVsFLqyC1e2m1meTaQPilmhrUXkShfdlkuXo+UQ=='
+ first_placer='Sn8jWuJQG2lTXoMRF1Ns9czd21CgXvPB1GZ4/j5LEYsUlX/RVsFLqyC1e2m1meTaQPilmhrUXkShfdlkuXo+UQ==' OR
+ final_canvas='Sn8jWuJQG2lTXoMRF1Ns9czd21CgXvPB1GZ4/j5LEYsUlX/RVsFLqyC1e2m1meTaQPilmhrUXkShfdlkuXo+UQ=='
 ) as tr
 ON tr.x=dt.x AND tr.y=dt.y
 WHERE hash = 'Sn8jWuJQG2lTXoMRF1Ns9czd21CgXvPB1GZ4/j5LEYsUlX/RVsFLqyC1e2m1meTaQPilmhrUXkShfdlkuXo+UQ==';
@@ -87,8 +87,7 @@ these are the database tables along with their row counts:
 (I'm currently uploading them to archive.org)<br>
 
 note:<br>
-this project focuses on analysing user data,<br>
-so the data does not contain admin rectangles etc.<br><br>
+this data does not contain admin rectangles etc.<br><br>
 
 ### **table structure**
 
@@ -98,18 +97,18 @@ so the data does not contain admin rectangles etc.<br><br>
 
 ```sql
 CREATE TABLE 2017_official (
-	date DATETIME,
-	hash VARCHAR(30),
-	x INT,
-	y INT,
-	color SMALLINT,
-	first_placer BOOL,
-	final_canvas BOOL 
+ date DATETIME,
+ hash VARCHAR(30),
+ x INT,
+ y INT,
+ color SMALLINT,
+ first_placer BOOL,
+ final_canvas BOOL 
 );
 
 CREATE TABLE 2017_users (
-	username VARCHAR(20),
-	hash VARCHAR(30)
+ username VARCHAR(20),
+ hash VARCHAR(30)
 );
 ```
 
@@ -119,26 +118,26 @@ CREATE TABLE 2017_users (
 
 ```sql
 CREATE TABLE 2023_official (
-	date DATETIME,
-	x INT,
-	y INT,
-	color VARCHAR(6),
-	hash VARCHAR(88)
+ date DATETIME,
+ x INT,
+ y INT,
+ color VARCHAR(6),
+ hash VARCHAR(88)
 );
 
 CREATE TABLE 2023_scraped (
-	date DATETIME,
-	x INT,
-	y INT,
-	color VARCHAR(6),
-	username VARCHAR(20)
+ date DATETIME,
+ x INT,
+ y INT,
+ color VARCHAR(6),
+ username VARCHAR(20)
 );
 
 CREATE TABLE 2023_trophy (
-	x INT,
-	y INT,
-	first_placer VARCHAR(88),
-	final_canvas VARCHAR(88)
+ x INT,
+ y INT,
+ first_placer VARCHAR(88),
+ final_canvas VARCHAR(88)
 );
 ```
 
@@ -150,7 +149,7 @@ INTO TABLE 2017_official
 FIELDS TERMINATED BY ',';
 ```
 
-this works for every table, just change the file path and table name<br><br>
+this import works for every table, just change the file path and table name<br><br>
 
 ## "user not found" ?
 
@@ -171,25 +170,25 @@ or data, that looks like this:
 
 ```json
 {
-	"hash": "KPIBp4LmRbnZNmInoufhDvNJdHwhskaB72VWY6BKy5nygN9XE6n2r/XqncgPkvl5VlZTCeiX97x+YOLh+ZF+YQ==",
+ "hash": "KPIBp4LmRbnZNmInoufhDvNJdHwhskaB72VWY6BKy5nygN9XE6n2r/XqncgPkvl5VlZTCeiX97x+YOLh+ZF+YQ==",
 
-	"pixels":[
-		{
-			"date":
-			"2023-07-25 12:14:13",
-			"color": "#D4D7D9",
-			"x": 777,
-			"y": -89,
-			"trophy": [1]
-		},
-		{
-			"date": "2023-07-25 12:18:22",
-			"color": "#000000",
-			"x": 776,
-			"y": -103,
-			"trophy": []
-		}
-	]
+ "pixels":[
+  {
+   "date":
+   "2023-07-25 12:14:13",
+   "color": "#D4D7D9",
+   "x": 777,
+   "y": -89,
+   "trophy": [1]
+  },
+  {
+   "date": "2023-07-25 12:18:22",
+   "color": "#000000",
+   "x": 776,
+   "y": -103,
+   "trophy": []
+  }
+ ]
 }
 ```
 trophies are represented by an array of integers:<br>
