@@ -1,6 +1,6 @@
 # pixel finder
 
-http://kisielo85.cba.pl/place/
+**http://kisielo85.cba.pl/place/**
 
 * [Data used](#data-used)
 * [How does it work](#how-does-it-work)
@@ -96,18 +96,18 @@ this data does not contain admin rectangles etc.<br><br>
 
 ```sql
 CREATE TABLE 2017_official (
- date DATETIME,
- hash VARCHAR(30),
- x INT,
- y INT,
- color SMALLINT,
- first_placer BOOL,
- final_canvas BOOL 
+  date DATETIME,
+  hash VARCHAR(30),
+  x INT,
+  y INT,
+  color SMALLINT,
+  first_placer BOOL,
+  final_canvas BOOL 
 );
 
 CREATE TABLE 2017_users (
- username VARCHAR(20),
- hash VARCHAR(30)
+  username VARCHAR(20),
+  hash VARCHAR(30)
 );
 ```
 
@@ -117,28 +117,30 @@ CREATE TABLE 2017_users (
 
 ```sql
 CREATE TABLE 2023_official (
- date DATETIME,
- x INT,
- y INT,
- color VARCHAR(6),
- hash VARCHAR(88)
+  date DATETIME,
+  x INT,
+  y INT,
+  color VARCHAR(6),
+  hash VARCHAR(88)
 );
 
 CREATE TABLE 2023_scraped (
- date DATETIME,
- x INT,
- y INT,
- color VARCHAR(6),
- username VARCHAR(20)
+  date DATETIME,
+  x INT,
+  y INT,
+  color VARCHAR(6),
+  username VARCHAR(20)
 );
 
 CREATE TABLE 2023_trophy (
- x INT,
- y INT,
- first_placer VARCHAR(88),
- final_canvas VARCHAR(88)
+  x INT,
+  y INT,
+  first_placer VARCHAR(88),
+  final_canvas VARCHAR(88)
 );
 ```
+
+<br>
 
 ### data import
 
@@ -149,6 +151,31 @@ FIELDS TERMINATED BY ',';
 ```
 
 this import works for every table, just change the file path and table name<br><br>
+
+### indexes
+
+for a faster database, the following indexes are needed:<br>
+```sql
+-- nick to hash search
+CREATE INDEX idx_username on 2017_users(username);
+CREATE INDEX idx_username on 20**_scraped(username);
+CREATE INDEX idx_date on 20**_official(date);
+
+-- getting pixels
+CREATE INDEX idx_hash on 20**_official(hash);
+
+-- trophies
+CREATE INDEX idx_first_placer on 20**_trophy(first_placer);
+CREATE INDEX idx_final_canvas on 20**_trophy(final_canvas);
+
+-- hash to nick search
+CREATE INDEX idx_hash on 2017_users(hash);
+CREATE INDEX idx_date on 20**_scraped(date);
+```
+note:<br>
+``20**`` means that an index should be made for all matching tables<br>
+examample -  ``20**_scraped`` = ``2022_scraped`` & ``2023_scraped``<br><br>
+
 
 ## "user not found" ?
 
@@ -169,25 +196,25 @@ or data, that looks like this:
 
 ```json
 {
- "hash": "KPIBp4LmRbnZNmInoufhDvNJdHwhskaB72VWY6BKy5nygN9XE6n2r/XqncgPkvl5VlZTCeiX97x+YOLh+ZF+YQ==",
-
- "pixels":[
-  {
-   "date":
-   "2023-07-25 12:14:13",
-   "color": "#D4D7D9",
-   "x": 777,
-   "y": -89,
-   "trophy": [1]
-  },
-  {
-   "date": "2023-07-25 12:18:22",
-   "color": "#000000",
-   "x": 776,
-   "y": -103,
-   "trophy": []
-  }
- ]
+  "hash": "KPIBp4LmRbnZNmInoufhDvNJdHwhskaB72VWY6BKy5nygN9XE6n2r/XqncgPkvl5VlZTCeiX97x+YOLh+ZF+YQ==",
+  "pixels":
+  [
+    {
+    "date":
+    "2023-07-25 12:14:13",
+    "color": "#D4D7D9",
+    "x": 777,
+    "y": -89,
+    "trophy": [1]
+    },
+    {
+    "date": "2023-07-25 12:18:22",
+    "color": "#000000",
+    "x": 776,
+    "y": -103,
+    "trophy": []
+    }
+  ]
 }
 ```
 trophies are represented by an array of integers:<br>
