@@ -83,15 +83,14 @@ these are the database tables along with their row counts:
 * 2023_scraped - ``74783143``
 * 2023_trophy - ``6000000``
 
-(here will be a link to the .csv files)<br>
-(I'm currently uploading them to archive.org)<br>
+all database files are available here:<br>
+https://archive.org/details/pixel-finder<br>
+
 
 note:<br>
 this data does not contain admin rectangles etc.<br><br>
 
-### **table structure**
-
-<br>
+### table structure
 
 2017<br>
 
@@ -141,7 +140,7 @@ CREATE TABLE 2023_trophy (
 );
 ```
 
-### **data import**
+### data import
 
 ```sql
 LOAD DATA INFILE '/tmp/2017_official.csv'
