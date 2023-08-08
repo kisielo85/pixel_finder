@@ -8,7 +8,7 @@
 * ["user not found" ?](#user-not-found)
 * [API](#api)
 
-this project is being re-built, you can check what I'm working on on my [trello board](https://trello.com/b/vH66AXR5/pixelfinderhttps:/)<br><br>
+this project is under development, you can check what I'm working on on my [trello board](https://trello.com/b/vH66AXR5/pixelfinderhttps:/)<br><br>
 
 ## Data used
 
@@ -74,16 +74,16 @@ source: just trust me bro<br><br>
 
 these are the database tables along with their row counts:
 
-* 2017_official - ``16559897``
-* 2017_users - ``1101042``
-* 2022_official - ``160353085``
-* 2022_scraped - ``114492522``
-* 2022_trophy - ``4000000``
-* 2023_official - ``132193709``
-* 2023_scraped - ``74783143``
-* 2023_trophy - ``6000000``
+* 2017_official - 16559897
+* 2017_users - 1101042
+* 2022_official - 160353085
+* 2022_scraped - 114492522
+* 2022_trophy - 4000000
+* 2023_official - 132193709
+* 2023_scraped - 74783143
+* 2023_trophy - 6000000
 
-all database files are available here:<br>
+all files needed are available here:<br>
 https://archive.org/details/pixel-finder<br>
 
 
@@ -173,8 +173,8 @@ CREATE INDEX idx_hash on 2017_users(hash);
 CREATE INDEX idx_date on 20**_scraped(date);
 ```
 note:<br>
-``20**`` means that an index should be made for all matching tables<br>
-examample -  ``20**_scraped`` = ``2022_scraped`` & ``2023_scraped``<br><br>
+**20\*\*** means that an index should be made for all matching tables<br>
+example -  **20\*\*_scraped** = **2022_scraped** & **2023_scraped**<br><br>
 
 
 ## "user not found" ?
@@ -185,7 +185,7 @@ read more in the [How does it work](#how-does-it-work) section<br><br>
 
 ## API
 
-you can get raw data using this link:<br>
+you can the get raw data using this link:<br>
 http://kisielo85.cba.pl/place/raw_result.php?nick=kisielo85&year=23<br>
 
 the possible outputs are:<br>
