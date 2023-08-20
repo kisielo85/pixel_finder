@@ -11,7 +11,7 @@
 
     gtag('config', 'G-HVG835GHS8');
     </script>
-    
+
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -148,7 +148,7 @@
     <canvas hidden id="output" width="2800" height="2000"></canvas>
 
     <script src="scripts/data_loading.js?e=1"></script>
-    <script src="scripts/downloading.js?e=1"></script>
+    <script src="scripts/downloading.js?e=2"></script>
 
     </body>
 </html>	
