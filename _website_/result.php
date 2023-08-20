@@ -148,7 +148,7 @@
     <canvas hidden id="output" width="2800" height="2000"></canvas>
 
     <script src="scripts/data_loading.js?e=1"></script>
-    <script src="scripts/downloading.js?e=2"></script>
+    <script src="scripts/downloading.js?e=3"></script>
 
     </body>
 </html>	

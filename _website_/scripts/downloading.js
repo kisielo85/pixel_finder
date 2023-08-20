@@ -62,10 +62,7 @@ function savepng(){
             t+=1
         }
     }
-
-
     
-
     //pixel circles
     const layers=[3,0,1,2]
     for (z of layers){
@@ -77,10 +74,12 @@ function savepng(){
             if (e!=z) continue
 
             ctx.beginPath();
-            if (year==17)
-                ctx.arc(parseInt(d.x)*2,parseInt(d.y)*2,12,0,2*Math.PI);
-            else
-                ctx.arc(parseInt(d.x)+offset_x,parseInt(d.y)+offset_y,12,0,2*Math.PI);
+
+            x=parseInt(d.x)+offset_x
+            y=parseInt(d.y)+offset_y
+            if (year==17){ x*=2; y*=2 }
+
+            ctx.arc(x+0.5,y+0.5,12,0,2*Math.PI);
             ctx.lineWidth = 2;
             c=hslaToHex(clr[e][0],100,clr[e][1],clr[e][2])
             ctx.strokeStyle=c;
@@ -91,9 +90,10 @@ function savepng(){
 
     //pixel highlights
     for (d of data.pixels){
-        console.log()
         x=parseInt(d.x)+offset_x
         y=parseInt(d.y)+offset_y
+        if (year==17){ x*=2; y*=2 }
+
         ctx.fillStyle = d.color+"40";
         ctx.fillRect( x-1, y-1, 3, 3 );
         ctx.fillStyle = d.color;
