@@ -5,7 +5,7 @@
 * [Data used](#data-used)
 * [How does it work](#how-does-it-work)
 * [Database](#database)
-* ["user not found" ?](#user-not-found)
+* ["user not found" ?](#user-not-found-)
 * [API](#api)
 
 this project is under development, you can check what I'm working on on my [trello board](https://trello.com/b/vH66AXR5/pixelfinderhttps:/)<br><br>
