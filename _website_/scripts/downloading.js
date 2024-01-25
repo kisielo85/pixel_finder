@@ -11,6 +11,32 @@ function hslaToHex(h, s, l, o) {
     return `#${f(0)}${f(8)}${f(4)}`+o;
 }
 
+// getting link to avatar from reddit
+fetch(`https://api.reddit.com/user/${nick}/about`)
+.then((response) => response.json())
+.then((res_data) => {
+    pfp_link=res_data.data.icon_img
+    pfp_link=pfp_link.slice(0,pfp_link.search('\\?'))
+
+    // getting base64
+    const data = new URLSearchParams();
+    data.append('link', pfp_link);
+
+    fetch('http://kisielo85.cba.pl/utils/link_to_base64.php', {method: 'POST',body: data})
+    .then((response) => response.text())
+    .then((res_data) => {
+        document.getElementById('pfp').src="data:image/png;base64,"+res_data
+    })
+    .catch((error) => {
+        document.getElementById('pfp').src="image/default_avatar.png"
+    })
+
+})
+.catch((error) => {
+    document.getElementById('pfp').src='img/default_avatar.png'
+});
+
+
 
 function savepng(){
     var canvas = document.getElementById('output')

@@ -27,6 +27,7 @@ def next_hour(dt):
   dt += timedelta(hours=1)
   return dt.replace(minute=0, second=0, microsecond=0)
 
+# clearing console and saving traffic
 traffic=[0,0,0]
 def cls():
   nextdate=next_hour(datetime.now())
@@ -45,12 +46,12 @@ def cls():
     print("save:",save)
     file.write(save)
     file.close()
-    
 
     traffic=[0,0,0]
 
 app = Flask(__name__)
 
+# find hash using username
 def get_hash(nick,year):
   db = mysql.connector.connect(host=db_host, user=db_user, password=db_pass, database=db_name)
   cursor = db.cursor()
@@ -100,6 +101,7 @@ def get_hash(nick,year):
 
   else: return (False,False)
 
+# returns placed pixels data
 ENDGAME={'22':'2022-04-04 22:47:40','23':'2023-07-25 19:44:00'}
 def get_pixels(nick,year):
   
@@ -165,6 +167,7 @@ def get_pixels(nick,year):
   
   return False
 
+# find nick using hash
 def get_nick(hash, year):
   if year!='23': return
 
@@ -211,7 +214,7 @@ def get_nick(hash, year):
 @app.route('/find/<string:nick>/<string:year>', methods=['GET'])
 def result(nick,year):
   p=get_pixels(nick,year)
-  if not p: return "not_found"
+  if not p: return {'error':'not_found'}
   if year=="17": traffic[0]+=1
   elif year=="22": traffic[1]+=1
   elif year=="23": traffic[2]+=1

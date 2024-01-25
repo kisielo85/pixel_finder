@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-HVG835GHS8"></script>
+    <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-HVG835GHS8');
+    </script>
+    
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>pixel finder</title>
+    <link rel="stylesheet" href="style.css?m=16">
+</head>
+<body>
+    <form action="result.html" method="GET">
+        <h1>super duper pixel finder
+            <select name="year">
+                <option id="opt17" value="17">2017</option>
+                <option id="opt22" value="22">2022</option>
+                <option id="opt23" value="23">2023</option>
+            </select>
+        </h1>
+    
+        <div class="center_div">
+            u/<input id="input_nick" type="text" name='nick' maxlength="20" autocomplete="off">
+            <input type="submit" value="find">
+        </div>
+    </form>
+
+    <!-- info -->
+    <div class="box" style="text-align: left;">
+        <p>this project is on <a href="https://github.com/kisielo85/pixel_finder">github</a></p>
+        <p>you can check what I'm currently working on here:<br><a href="https://trello.com/b/vH66AXR5/pixelfinder">trello.com/b/vH66AXR5/pixelfinder</a></p>
+    </div>
+
+    <script src="scripts/utils.js"></script>
+    <script>
+        var nick=get("nick")
+        var year=get('year')
+
+        if (!year) year="23"
+        if (e=document.getElementById(`opt${year}`)) e.selected=true
+
+        if (nick) document.getElementById("input_nick").value=nick
+    </script>
+</body>
+</html>

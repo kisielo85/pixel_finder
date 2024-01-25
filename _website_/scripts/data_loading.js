@@ -51,7 +51,7 @@ function loadpx(){
     }
 
     document.getElementById("result").hidden=false
-    document.getElementById("footer").hidden=false
+    document.getElementById("info").hidden=false
     document.getElementById("loading_msg").hidden=true
 
     // fixing nickname size
@@ -63,36 +63,27 @@ function loadpx(){
     }
 }
 
-//getting stuff from raw_result.php
-function checkData() {
-    data=document.getElementById('ifr').contentWindow.document.body.innerHTML;
-    refresh=true
-    switch (data){
-        case "":
-        case "error":
-            repeated+=1
-            // if refreshing didn't work
-            if (repeated >= 2){
-                loadmsg("database not responding :c<p>please come back later</p>")
-            }
-            break
-        case "not_found":
-            loadmsg("<strong>u/"+nick+"</strong><br>user not found :c<br>")
-            refresh=false
-            break
-        default:
-            loadmsg("loading result<br>")
-            data = JSON.parse(data)
-            refresh=false
-            loadpx()
-    }
-    //refreshing the iframe every 10 seconds
-    setTimeout(function() { if (refresh) document.getElementById('ifr').contentWindow.location.reload(); }, 10000);
-}
-checkData();
+// fetching data from pixel_finder API
+fetch(`http://kisielo85.cba.pl/place/raw_result.php?nick=${nick}&year=${year}`)
+.then((response) => response.json())
+.then((res_data) => {
 
-// checking iframe when it loads
-var myIframe = document.getElementById('ifr');
-    myIframe.addEventListener("load", function() {
-    checkData();
+    if (res_data.error){
+        switch (res_data.error){
+            case "not_found":
+                loadmsg("<strong>u/"+nick+"</strong><br>user not found :c<br>")
+                break
+            case "no_response":
+                loadmsg(`database not responding :c<p>please come back later</p><p>${error}</p>`)
+                break
+        }
+        return
+    }
+
+    data=res_data
+    loadpx()
+})
+.catch((error) => {
+    loadmsg(`pixel_finder API not responding :c<p>please come back later</p><p>${error}</p>`)
+    console.log(error)
 });

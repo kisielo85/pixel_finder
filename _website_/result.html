@@ -22,25 +22,19 @@
     <h1 id="js_check">please enable javascript in order for site to work</h1>
     <script> document.getElementById("js_check").hidden=true </script>
 
-    <?php
-        //checking nick, year and passing it to javascript
-        if (!$nick=@$_GET['nick']) header("Location: index.php");
-        if (!$year=@$_GET['year']) $year="22";
-        echo "<script> const nick='$nick'; const year='$year'; </script>";
-        // loading data from raw_result
-        echo "<iframe id='ifr' src='raw_result.php?nick=$nick&year=$year' hidden></iframe>";
+    <iframe id='ifr' src='' hidden></iframe>
 
-        // getting avatar from reddit, and converting to base64
-        $context = stream_context_create(['http' =>
-        ['header' => 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.81 Safari/537.36']]);
-        $pfp="";
-        error_reporting(0);
-        $json= file_get_contents("https://www.reddit.com/user/$nick/about.json",false,$context);
-        error_reporting(1);
-        $img=json_decode($json,true)["data"]["icon_img"];
-        $img=substr($img,0,strrpos($img,".")+4);
-        if ($img !="") $pfp = "data:image/png;base64,".base64_encode(file_get_contents($img));
-    ?>
+    <script>
+        function get(name){
+            if(name=(new RegExp('[?&]'+encodeURIComponent(name)+'=([^&]*)')).exec(location.search))
+                return decodeURIComponent(name[1]);
+        }
+        //checking username & year
+        let nick=get("nick")
+        let year=get('year')
+        if (!nick) console.log("neinn") //header("Location: index.php");
+        if (!year) year="22"
+    </script>
 
     <!-- this div holds everything that
     needs to be shown if a result is found-->
@@ -48,10 +42,10 @@
         
         <div class='image' id='image'>
             <div id='circles'></div>
-            <img id='tmpl' src='img/template<?php echo$year?>.png' alt='template'>
+            <img id='tmpl' src='' alt='template'>
             
-            <img id='pfp' class='pfp' src='<?php echo$pfp?>'/>
-            <div id='nickname' class='nickname'>u/<?php echo$nick?></div>
+            <img id='pfp' class='pfp' src=''/>
+            <div id='nickname' class='nickname'></div>
             <div id='data' class='data'></div>
             <div class='circle' style='border-width: 5px; margin-left: var(--offset_x); left: 2048px; top: 808px;'></div>
         </div>
@@ -132,23 +126,76 @@
 
     </div>
 
-    <!-- used for messages like "looking for user" / "user not found" etc -->
+    <!-- messages like "looking for user" / "user not found" etc -->
     <div class='center_div' id="loading_msg">
         <div id="msg_content"></div>
 
-        <form action='index.php'>
-            <input type='hidden' name='year' value='<?php echo $year?>'>
-            <input type='hidden' name='nick' value='<?php echo $nick?>'>
+        <form action='index.html'>
+            <input type='hidden' name='year'>
+            <input type='hidden' name='nick'>
             <input type='submit' value='return'/>
         </form>
     </div>
 
-    <?php include("footer.html") ?>
+    <!-- info, links, credits etc. -->
+    <div id="info" hidden>
+        <div class="credit">
+            <p>keep in mind that date is in UTC+0</p>
+            data used:<br>
+            2017: <a href="https://archive.org/details/place2017-opl/">unofficial data</a>
+            from <a href="https://www.reddit.com/user/opl_/">u/opl_</a><br>
+            2022: <a href="https://www.reddit.com/r/place/comments/txh660/dump_of_the_raw_unprocessed_data_i_collected/">unofficial data</a>
+            from <a href="https://www.reddit.com/user/opl_/">u/opl_</a><br>
+    
+            2023: <a href="https://mod.ifies.com/f/230728_pixelhistory.xz">unofficial data</a> from <a href="https://www.reddit.com/user/scaevolus">u/scaevolus</a><br>
+            + <a href="https://cdn.discordapp.com/attachments/297524632234229761/1133536680373133332/pixels.csv.zst">unofficial data</a> from <a href="https://www.reddit.com/u/nepeat/">u/nepeat</a><br>
+    
+            official reddit datasets: 
+            <a href="https://www.reddit.com/r/redditdata/comments/6640ru/place_datasets_april_fools_2017/">2017</a> /
+            <a href="https://www.reddit.com/r/place/comments/txvk2d/rplace_datasets_april_fools_2022/">2022</a> /
+            <a href="https://www.reddit.com/r/place/comments/15bjm5o/rplace_2023_data/">2023</a><br><br>
+    
+           
+            <form action='index.html'>
+                <input type='hidden' name='year'>
+                <input type='hidden' name='nick'>
+                <input type='submit' value='return'/>
+            </form>
+        </div>
+        
+        <footer>
+            <div class="ad">✨Shameless Ad✨</div>
+            <br>
+            If you liked this website,<br>please consider donating:<br>
+            <a href="https://www.buymeacoffee.com/kisielo85">buymeacoffee.com/kisielo85</a><br><br>
+            I sometimes do programming and stuff.<br>
+            you can find me on:
+            <ul>
+                <li><a href="https://www.youtube.com/channel/UCWqSytRyHyWFN2b9sJdzYmw">youtube</a></li>
+                <li><a href="https://github.com/kisielo85">github</a></li>
+                <li><a href="https://www.reddit.com/user/kisielo85">reddit</a></li>
+                <li><a href="https://kisielo85.itch.io">itchio</a></li>
+                <li><a href="https://discord.com/users/430039581908271104">discord</a></li>
+            </ul>
+            <br><br>
+        </footer>
+    </div>
 
-    <canvas hidden id="output" width="2800" height="2000"></canvas>
+    <canvas id="output" width="2800" height="2000" hidden></canvas>
 
-    <script src="scripts/data_loading.js?e=1"></script>
-    <script src="scripts/downloading.js?e=3"></script>
+    <script src="scripts/data_loading.js?e=2"></script>
+    <script src="scripts/downloading.js?e=4"></script>
+    <script>
+        document.getElementById('tmpl').src=`img/template${year}.png`
+        document.getElementById('nickname').innerText=`u/${nick}`
+        
+        // args for return buttons
+        document.querySelectorAll('input[name="year"]')
+        .forEach(function(e){e.value=year})
+        document.querySelectorAll('input[name="nick"]')
+        .forEach(function(e){e.value=nick})
 
+    </script>
+        
     </body>
 </html>	
