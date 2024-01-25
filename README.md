@@ -2,57 +2,71 @@
 
 **http://kisielo85.cba.pl/place/**
 
-* [Data used](#data-used)
-* [How does it work](#how-does-it-work)
-* [Database](#database)
-* ["user not found" ?](#user-not-found-)
-* [API](#api)
+- [Data used](#data-used)
+- [How does it work](#how-does-it-work)
+- [Database](#database)
+- ["user not found" ?](#user-not-found-)
+- [API](#api)
 
-this project is under development, you can check what I'm working on on my [trello board](https://trello.com/b/vH66AXR5/pixelfinderhttps:/)<br><br>
+this project is under development, you can check what I'm working on on my [trello board](https://trello.com/b/vH66AXR5/pixelfinderhttps:/)
 
 ## Data used
 
 official datasets: [2017](https://www.reddit.com/r/redditdata/comments/6640ru/place_datasets_april_fools_2017/) / [2022](https://www.reddit.com/r/place/comments/txvk2d/rplace_datasets_april_fools_2022/) / [2023](https://www.reddit.com/r/place/comments/15bjm5o/rplace_2023_data/)
 
-scraped data:<br>
-2017: [(data)](https://https://archive.org/details/place2017-opl) by [u/opl_](https://www.reddit.com/user/opl_)<br>
-2022: [(data)](https://www.reddit.com/r/redditdata/comments/6640ru/place_datasets_april_fools_2017/) by [u/opl_](https://www.reddit.com/user/opl_)<br>
+scraped data:
+
+2017: [(data)](https://https://archive.org/details/place2017-opl) by [u/opl\_](https://www.reddit.com/user/opl_)
+
+2022: [(data)](https://www.reddit.com/r/redditdata/comments/6640ru/place_datasets_april_fools_2017/) by [u/opl\_](https://www.reddit.com/user/opl_)
+
 2023: [(data)](https://mod.ifies.com/f/230728_pixelhistory.xz) by [u/scaevolus](https://www.reddit.com/user/scaevolus) & [(data)](https://cdn.discordapp.com/attachments/297524632234229761/1133536680373133332/pixels.csv.zst) by [u/nepeat](https://www.reddit.com/u/nepeat/https:/)
 
-for processed data and database structure, go to [Database](#database) section<br><br>
+for processed data and database structure, go to [Database](#database) section
 
 ## How does it work
 
 ### finding hashes
 
-the official dataset contains all data about pixels<br>
-the thing is - you can't see who placed the pixel, there is only a hash that can't be reversed<br>
+the official dataset contains all data about pixels
+
+the thing is - you can't see who placed the pixel, there is only a hash that can't be reversed
+
 ![](assets/20230805_202401_finding_hashes_1.png)
 
-but by using scraped data, that was collected during the event - there is a chance to find a few of your pixels<br>
+but by using scraped data, that was collected during the event - there is a chance to find a few of your pixels
+
 ![](assets/20230805_202421_finding_hashes_2.png)
 
-this data is not as accurate but by roughly comparing it to the official one, you get a list of possible hashes<br>
+this data is not as accurate but by roughly comparing it to the official one, you get a list of possible hashes
+
 ![](assets/20230805_202429_finding_hashes_3.png)
 
-the only thing left to do now is to get a hash that occured the most times<br>
+the only thing left to do now is to get a hash that occured the most times
+
 ![](assets/20230805_202445_finding_hashes_4.png)
 
 ### trophies
 
-endgame is by far the easiest to calculate, just check if the pixel was placed after the whiteout started<br>
+endgame is by far the easiest to calculate, just check if the pixel was placed after the whiteout started
+
 ![](assets/20230805_204445_trophy_1.png)
 
-first placer and final canvas are a different story.<br>
-this script: `/_data processing scripts_/process_trophies.py` goes through every pixel placement, and for every coordinate saves first and last users that have been there<br>
+first placer and final canvas are a different story.
+
+this script: `/_data processing scripts_/process_trophies.py` goes through every pixel placement, and for every coordinate saves first and last users that have been there
+
 ![](assets/20230805_205553_trophy_2.png)
 
-using this we can connect trophies to the query for getting pixels<br>
-![](assets/20230805_204502_trophy_3.png)<br>
-this query also makes sure that only the correct pixel gets the trophy.<br>
-for example: if there are multiple pixels placed on the same cords - only the first one has a chance to get a "first placer" trophy, and only the last one can get the "final canvas"<br><br>
+using this we can connect trophies to the query for getting pixels
 
-```sql
+![](assets/20230805_204502_trophy_3.png)
+
+this query also makes sure that only the correct pixel gets the trophy.
+
+for example: if there are multiple pixels placed on the same cords - only the first one has a chance to get a "first placer" trophy, and only the last one can get the "final canvas"
+
+```
 SELECT date, color, dt.x, dt.y,
 CASE WHEN tr.first_placer=hash AND ROW_NUMBER() OVER(PARTITION BY dt.x, dt.y ORDER BY date desc)=1 THEN TRUE ELSE FALSE END AS first_placer,
 CASE WHEN tr.final_canvas=hash AND ROW_NUMBER() OVER(PARTITION BY dt.x, dt.y ORDER BY date)=1 THEN TRUE ELSE FALSE END AS final_canvas,
@@ -67,34 +81,36 @@ ON tr.x=dt.x AND tr.y=dt.y
 WHERE hash = 'Sn8jWuJQG2lTXoMRF1Ns9czd21CgXvPB1GZ4/j5LEYsUlX/RVsFLqyC1e2m1meTaQPilmhrUXkShfdlkuXo+UQ==';
 ```
 
-*yeah, I know the hash is repeated 3 times, it's more efficient this way*<br>
-source: just trust me bro<br><br>
+_yeah, I know the hash is repeated 3 times, it's more efficient this way_
+
+source: just trust me bro
 
 ## Database
 
 these are the database tables along with their row counts:
 
-* 2017_official - 16559897
-* 2017_users - 1101042
-* 2022_official - 160353085
-* 2022_scraped - 114492522
-* 2022_trophy - 4000000
-* 2023_official - 132193709
-* 2023_scraped - 74783143
-* 2023_trophy - 6000000
+- 2017_official - 16559897
+- 2017_users - 1101042
+- 2022_official - 160353085
+- 2022_scraped - 114492522
+- 2022_trophy - 4000000
+- 2023_official - 132193709
+- 2023_scraped - 74783143
+- 2023_trophy - 6000000
 
-all files needed are available here:<br>
-https://archive.org/details/pixel-finder<br>
+all files needed are available here:
 
+https://archive.org/details/pixel-finder
 
-note:<br>
-this data does not contain admin rectangles etc.<br><br>
+note:
+
+this data does not contain admin rectangles etc.
 
 ### table structure
 
-2017<br>
+2017
 
-```sql
+```
 CREATE TABLE 2017_official (
   date DATETIME,
   hash VARCHAR(30),
@@ -102,7 +118,7 @@ CREATE TABLE 2017_official (
   y INT,
   color SMALLINT,
   first_placer BOOL,
-  final_canvas BOOL 
+  final_canvas BOOL
 );
 
 CREATE TABLE 2017_users (
@@ -111,11 +127,9 @@ CREATE TABLE 2017_users (
 );
 ```
 
-<br>
+2022 / 2023
 
-2022 / 2023<br>
-
-```sql
+```
 CREATE TABLE 2023_official (
   date DATETIME,
   x INT,
@@ -140,22 +154,21 @@ CREATE TABLE 2023_trophy (
 );
 ```
 
-<br>
-
 ### data import
 
-```sql
+```
 LOAD DATA INFILE '/tmp/2017_official.csv'
 INTO TABLE 2017_official
 FIELDS TERMINATED BY ',';
 ```
 
-this import works for every table, just change the file path and table name<br><br>
+this import works for every table, just change the file path and table name
 
 ### indexes
 
-for a faster database, the following indexes are needed:<br>
-```sql
+for a faster database, the following indexes are needed:
+
+```
 -- nick to hash search
 CREATE INDEX idx_username on 2017_users(username);
 CREATE INDEX idx_username on 20**_scraped(username);
@@ -172,29 +185,38 @@ CREATE INDEX idx_final_canvas on 20**_trophy(final_canvas);
 CREATE INDEX idx_hash on 2017_users(hash);
 CREATE INDEX idx_date on 20**_scraped(date);
 ```
-note:<br>
-**20\*\*** means that an index should be made for all matching tables<br>
-example -  **20\*\*_scraped** = **2022_scraped** & **2023_scraped**<br><br>
 
+note:
+
+**20\*\*** means that an index should be made for all matching tables
+
+example - **20\*\*\_scraped** = **2022_scraped** & **2023_scraped**
 
 ## "user not found" ?
 
-well, since the project relies on unofficial datasets, it just happens.<br>
-basically - the more pixels you've placed, the higher the chance of them being in unofficial datasets, and that translates to a better chanse of getting the correct result<br>
-read more in the [How does it work](#how-does-it-work) section<br><br>
+well, since the project relies on unofficial datasets, it just happens.
+
+basically - the more pixels you've placed, the higher the chance of them being in unofficial datasets, and that translates to a better chanse of getting the correct result
+
+read more in the [How does it work](#how-does-it-work) section
 
 ## API
 
-you can the get raw data using this link:<br>
-http://kisielo85.cba.pl/place/raw_result.php?nick=kisielo85&year=23<br>
+you can the get raw data using this link:
 
-the possible outputs are:<br>
-``error`` - the server is offline, or something went wrong<br>
-``not found`` - user is not in the unofficial dataset<br>
+http://kisielo85.cba.pl/place/raw_result.php?nick=kisielo85&year=23
 
-or data, that looks like this:
+if an error occurs, a json is returned, like: `{'error':'not_found'}`
 
-```json
+the possible errors are:
+
+`not_found` - user is not in the unofficial dataset
+
+`no_response` - the database is not responding
+
+otherwise, the data returned looks like this:
+
+```
 {
   "hash": "KPIBp4LmRbnZNmInoufhDvNJdHwhskaB72VWY6BKy5nygN9XE6n2r/XqncgPkvl5VlZTCeiX97x+YOLh+ZF+YQ==",
   "pixels":
@@ -217,7 +239,11 @@ or data, that looks like this:
   ]
 }
 ```
-trophies are represented by an array of integers:<br>
-0 - first placer<br>
-1 - final canvas<br>
-2 - endgame<br>
+
+trophies are represented by an array of integers:
+
+0 - first placer
+
+1 - final canvas
+
+2 - endgame

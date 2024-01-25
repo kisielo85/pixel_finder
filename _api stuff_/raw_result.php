@@ -1,4 +1,5 @@
 <?php
+    header('Access-Control-Allow-Origin: *');
     if ($nick = @$_GET['nick']){
         error_reporting(0);
         $year="all";
@@ -13,7 +14,7 @@
             echo $data;
         }
         else{
-            echo "error";
+            echo "{'error':'no_response'}";
         }
     }
     ?>
