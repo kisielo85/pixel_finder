@@ -3,12 +3,9 @@ import mysql.connector
 from datetime import datetime, timedelta
 import time
 import os
-from flask import Flask, request
+from flask import Flask, request, jsonify
 from threading import Thread
 import json
-
-
-dev=False
 
 config=json.load(open("config.json", 'r'))
 db_user=config['db_user']
@@ -211,15 +208,19 @@ def get_nick(hash, year):
   return f"{matched}/{src_found}",best
 
 @app.route('/')
-@app.route('/find/<string:nick>/<string:year>', methods=['GET'])
-def result(nick,year):
+@app.route('/find', methods=['GET'])
+def result():
+  nick = request.args.get("nick")
+  year = request.args.get("year")
   p=get_pixels(nick,year)
   if not p: return {'error':'not_found'}
   if year=="17": traffic[0]+=1
   elif year=="22": traffic[1]+=1
   elif year=="23": traffic[2]+=1
   print("traffic:",traffic)
-  return p
+  response = jsonify(p)
+  response.headers.add('Access-Control-Allow-Origin', '*')
+  return response
 
 @app.route('/traffic')
 def stats():

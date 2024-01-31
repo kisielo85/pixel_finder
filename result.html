@@ -14,7 +14,6 @@
 
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>pixel finder</title>
     <link rel="stylesheet" href="style.css?m=14">
@@ -22,8 +21,6 @@
 <body>   
     <h1 id="js_check">please enable javascript in order for site to work</h1>
     <script> document.getElementById("js_check").hidden=true </script>
-
-    <iframe id='ifr' src='' hidden></iframe>
 
     <script>
         function get(name){
@@ -184,7 +181,7 @@
 
     <canvas id="output" width="2800" height="2000" hidden></canvas>
 
-    <script src="scripts/data_loading.js?e=2"></script>
+    <script src="scripts/data_loading.js?e=3"></script>
     <script src="scripts/downloading.js?e=4"></script>
     <script>
         document.getElementById('tmpl').src=`img/template${year}.png`

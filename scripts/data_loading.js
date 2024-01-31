@@ -64,10 +64,10 @@ function loadpx(){
 }
 
 // fetching data from pixel_finder API
-fetch(`http://kisielo85.cba.pl/place/raw_result.php?nick=${nick}&year=${year}`)
+fetch(`https://k85api.eu.loclx.io/find?nick=${nick}&year=${year}`)
 .then((response) => response.json())
 .then((res_data) => {
-
+    res_data=JSON.parse(res_data)
     if (res_data.error){
         switch (res_data.error){
             case "not_found":
@@ -79,11 +79,12 @@ fetch(`http://kisielo85.cba.pl/place/raw_result.php?nick=${nick}&year=${year}`)
         }
         return
     }
-
     data=res_data
     loadpx()
 })
 .catch((error) => {
     loadmsg(`pixel_finder API not responding :c<p>please come back later</p><p>${error}</p>`)
     console.log(error)
+}).finally(()=>{
+    console.log("AUG")
 });
