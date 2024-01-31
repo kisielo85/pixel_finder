@@ -202,21 +202,25 @@ read more in the [How does it work](#how-does-it-work) section
 
 ## API
 
-you can the get raw data using this link:
+if you're not hosting pixelfinder yourself, feel free to use mine instance for any of your projects.
+just make sure give me credit by adding a link to this github repo
 
-http://kisielo85.cba.pl/place/raw_result.php?nick=kisielo85&year=23
+https://pixelfinder.153070065.xyz/api?nick=kisielo85&year=23
 
-if an error occurs, a json is returned, like: `{'error':'not_found'}`
+```js
+const api_link="https://pixelfinder.153070065.xyz/api"
 
-the possible errors are:
-
-`not_found` - user is not in the unofficial dataset
-
-`no_response` - the database is not responding
-
-otherwise, the data returned looks like this:
-
+fetch(`${api_link}?nick=${nick}&year=${year}`)
+.then((response) => response.json())
+.then((data) => {
+    console.log(data)
+}
 ```
+
+if user is not found an error is returned: `{'error':'not_found'}`
+otherwise, the data looks like this:
+
+```json
 {
   "hash": "KPIBp4LmRbnZNmInoufhDvNJdHwhskaB72VWY6BKy5nygN9XE6n2r/XqncgPkvl5VlZTCeiX97x+YOLh+ZF+YQ==",
   "pixels":

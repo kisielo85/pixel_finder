@@ -28,7 +28,7 @@ fetch(`https://api.reddit.com/user/${nick}/about`)
         document.getElementById('pfp').src="data:image/png;base64,"+res_data
     })
     .catch((error) => {
-        document.getElementById('pfp').src="image/default_avatar.png"
+        document.getElementById('pfp').src="img/default_avatar.png"
     })
 
 })

@@ -1,3 +1,6 @@
+const api_link="https://pixelfinderapi.153070065.xyz/api"
+
+
 // 2023 canvas has different dimentions
 offset_gui=0; offset_x=0; offset_y=0;
 if (year==23){
@@ -64,17 +67,16 @@ function loadpx(){
 }
 
 // fetching data from pixel_finder API
-fetch(`https://k85api.eu.loclx.io/find?nick=${nick}&year=${year}`)
+fetch(`${api_link}?nick=${nick}&year=${year}`)
 .then((response) => response.json())
 .then((res_data) => {
-    res_data=JSON.parse(res_data)
     if (res_data.error){
         switch (res_data.error){
             case "not_found":
                 loadmsg("<strong>u/"+nick+"</strong><br>user not found :c<br>")
                 break
-            case "no_response":
-                loadmsg(`database not responding :c<p>please come back later</p><p>${error}</p>`)
+            default:
+                loadmsg(`something went wrong :c<p>please come back later</p><p>${res_data.error}</p>`)
                 break
         }
         return
@@ -85,6 +87,4 @@ fetch(`https://k85api.eu.loclx.io/find?nick=${nick}&year=${year}`)
 .catch((error) => {
     loadmsg(`pixel_finder API not responding :c<p>please come back later</p><p>${error}</p>`)
     console.log(error)
-}).finally(()=>{
-    console.log("AUG")
-});
+})

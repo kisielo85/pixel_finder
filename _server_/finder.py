@@ -131,7 +131,7 @@ def get_pixels(nick,year):
         'y':r[3],
         'trophy':tr}
         )
-    return json.dumps(out)
+    return out
   
   elif year in ['22','23']:
     cursor.execute(f"""SELECT date, color, dt.x, dt.y,
@@ -160,7 +160,7 @@ def get_pixels(nick,year):
         'y':r[3],
         'trophy':tr}
         )
-    return json.dumps(out)
+    return out
   
   return False
 
@@ -207,18 +207,20 @@ def get_nick(hash, year):
   
   return f"{matched}/{src_found}",best
 
-@app.route('/')
-@app.route('/find', methods=['GET'])
+@app.route('/api', methods=['GET'])
 def result():
   nick = request.args.get("nick")
   year = request.args.get("year")
   p=get_pixels(nick,year)
-  if not p: return {'error':'not_found'}
-  if year=="17": traffic[0]+=1
-  elif year=="22": traffic[1]+=1
-  elif year=="23": traffic[2]+=1
-  print("traffic:",traffic)
-  response = jsonify(p)
+  if p:
+    if year=="17": traffic[0]+=1
+    elif year=="22": traffic[1]+=1
+    elif year=="23": traffic[2]+=1
+    print("traffic:",traffic)
+    response = jsonify(p)
+  else:
+    response = jsonify({'error':'not_found'})
+    
   response.headers.add('Access-Control-Allow-Origin', '*')
   return response
 
