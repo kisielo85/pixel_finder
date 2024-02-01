@@ -16,21 +16,18 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>pixel finder</title>
-    <link rel="stylesheet" href="style.css?m=14">
+    <link rel="stylesheet" href="static/style.css?e=0">
 </head>
 <body>   
     <h1 id="js_check">please enable javascript in order for site to work</h1>
     <script> document.getElementById("js_check").hidden=true </script>
 
+    <script src="static/utils.js"></script>
     <script>
-        function get(name){
-            if(name=(new RegExp('[?&]'+encodeURIComponent(name)+'=([^&]*)')).exec(location.search))
-                return decodeURIComponent(name[1]);
-        }
         //checking username & year
         let nick=get("nick")
         let year=get('year')
-        if (!nick) console.log("neinn") //header("Location: index.php");
+        if (!nick) window.location.replace("index.html")
         if (!year) year="22"
     </script>
 
@@ -76,7 +73,7 @@
             </div>                
             <input type='button' class="btn" value='save .png' onclick="savepng()"/>
         </div>
-        <script src="scripts/sliders.js?e=1"></script>
+        <script src="static/sliders.js?e=0"></script>
 
 
         <!-- raw data  -->
@@ -120,7 +117,7 @@
             <input type='button' class="btn" value='save .txt' onclick="saveRawData()"/>
 
         </div>
-        <script src="scripts/raw_data.js?e=1"></script>
+        <script src="static/raw_data.js?e=0"></script>
 
     </div>
 
@@ -181,10 +178,10 @@
 
     <canvas id="output" width="2800" height="2000" hidden></canvas>
 
-    <script src="scripts/data_loading.js?e=6"></script>
-    <script src="scripts/downloading.js?e=5"></script>
+    <script src="static/data_loading.js?e=0"></script>
+    <script src="static/download_png.js?e=0"></script>
     <script>
-        document.getElementById('tmpl').src=`img/template${year}.png`
+        document.getElementById('tmpl').src=`static/img/template${year}.png`
         document.getElementById('nickname').innerText=`u/${nick}`
         
         // args for return buttons

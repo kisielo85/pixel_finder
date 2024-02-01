@@ -1,4 +1,4 @@
-const api_link="https://pixelfinderapi.153070065.xyz/api"
+const api_link="https://pixelfinder.153070065.xyz/api"
 
 
 // 2023 canvas has different dimentions
@@ -88,3 +88,36 @@ fetch(`${api_link}?nick=${nick}&year=${year}`)
     loadmsg(`pixel_finder API not responding :c<p>please come back later</p><p>${error}</p>`)
     console.log(error)
 })
+
+
+// getting link to avatar from reddit
+loaded_pfp=false
+fetch(`https://api.reddit.com/user/${nick}/about`)
+.then((response) => response.json())
+.then((res_data) => {
+    pfp_link=res_data.data.icon_img
+    pfp_link=pfp_link.slice(0,pfp_link.search('\\?'))
+
+    // getting base64
+    const data = new URLSearchParams();
+    data.append('link', pfp_link);
+
+    fetch(`${api_link}/pfp`, {method: 'POST',body: data})
+    .then((response) => response.json())
+    .then((res_data) => {
+        if (res_data.error){ console.log(res_data.error)}
+        else if(res_data.pfp){
+            document.getElementById('pfp').src="data:image/png;base64,"+res_data.pfp
+            loaded_pfp=true
+        }
+        
+    })
+    .catch((error) => {console.log(`error while downloading profile picture: ${error}`)})
+})
+.catch((error) => {console.log(`error while fetching profile picture: ${error}`)})
+.finally(()=>{
+    if (!loaded_pfp){
+        document.getElementById('pfp').src='static/img/default_avatar.png'
+    }
+        
+});

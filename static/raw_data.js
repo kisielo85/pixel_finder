@@ -2,7 +2,7 @@ rw_dt=[false,true,true]
 onnly=3
 
 // dumps raw pixels data
-// used in downloading.js, and as a preview in result.html
+// used in download_png.js, and as a preview in result.html
 function data_gen(html=false){
     i=0
     out=""

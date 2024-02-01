@@ -2,16 +2,29 @@ from genericpath import isdir
 import mysql.connector
 from datetime import datetime, timedelta
 import time
-import os
-from flask import Flask, request, jsonify
+from os import path
+from flask import Flask, request, jsonify, render_template
+from flask_cors import CORS
 from threading import Thread
 import json
+import requests
+from PIL import Image
+import io
+import base64
 
-config=json.load(open("config.json", 'r'))
+base_dir = path.dirname(path.abspath(__file__))
+
+config=json.load(open(path.join(base_dir, 'config.json'), 'r'))
 db_user=config['db_user']
 db_pass=config["db_pass"]
 db_host=config["db_host"]
 db_name=config["db_name"]
+
+app = Flask(__name__, template_folder=path.join(base_dir, '../'), static_folder=path.join(base_dir, '../static'))
+CORS(app, resources={
+  "/api": {"origins": ["*"]},
+  "/api/pfp": {"origins": ["https://kisielo85.github.io", "https://pixelfinder.153070065.xyz"]}
+})
 
 def b(text):
   for ch in ['\\','/',':','*','?','"','<','>','|']:
@@ -45,8 +58,6 @@ def cls():
     file.close()
 
     traffic=[0,0,0]
-
-app = Flask(__name__)
 
 # find hash using username
 def get_hash(nick,year):
@@ -207,22 +218,46 @@ def get_nick(hash, year):
   
   return f"{matched}/{src_found}",best
 
+# serve html files
+@app.route('/')
+@app.route('/index')
+@app.route('/index.html')
+def index_html(): return render_template('index.html')
+
+@app.route('/result')
+@app.route('/result.html')
+def result_html(): return render_template('result.html')
+
 @app.route('/api', methods=['GET'])
-def result():
+def api():
   nick = request.args.get("nick")
   year = request.args.get("year")
   p=get_pixels(nick,year)
-  if p:
-    if year=="17": traffic[0]+=1
-    elif year=="22": traffic[1]+=1
-    elif year=="23": traffic[2]+=1
-    print("traffic:",traffic)
-    response = jsonify(p)
-  else:
-    response = jsonify({'error':'not_found'})
-    
-  response.headers.add('Access-Control-Allow-Origin', '*')
-  return response
+
+  if not p:
+    return jsonify({'error':'not_found'})
+  
+  if year=="17": traffic[0]+=1
+  elif year=="22": traffic[1]+=1
+  elif year=="23": traffic[2]+=1
+  print("traffic:",traffic)
+  return jsonify(p)
+
+# changing an image to base64,
+# so it can be pasted to html canvas and downloaded
+@app.route('/api/pfp', methods=['POST'])
+def loadpfp():
+  img_response = requests.get(request.form.get('link'))
+
+  if img_response.status_code // 100 != 2:
+    return jsonify({"error": f"can't download image, error:{img_response.status_code}"})
+  
+  output_buffer = io.BytesIO()
+  image = Image.open(io.BytesIO(img_response.content)).resize((450, 450))
+  image.save(output_buffer, format="PNG")
+  base64_image = base64.b64encode(output_buffer.getvalue()).decode("utf-8")
+
+  return jsonify({"pfp": base64_image})
 
 @app.route('/traffic')
 def stats():
@@ -233,4 +268,4 @@ if __name__ == "__main__":
   c = Thread(target=cls)
   c.daemon=True
   c.start()
-  app.run(debug=False,host="0.0.0.0",port=int(2139))
+  app.run(debug=True,host="0.0.0.0",port=int(2139))

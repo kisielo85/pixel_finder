@@ -1,6 +1,7 @@
 # pixel finder
 
-**http://kisielo85.cba.pl/place/**
+**https://kisielo85.github.io/pixel_finder**<br>
+**https://pixelfinder.153070065.xyz**
 
 - [Data used](#data-used)
 - [How does it work](#how-does-it-work)
@@ -202,8 +203,8 @@ read more in the [How does it work](#how-does-it-work) section
 
 ## API
 
-if you're not hosting pixelfinder yourself, feel free to use mine instance for any of your projects.
-just make sure give me credit by adding a link to this github repo
+if you're not hosting pixelfinder yourself, feel free to use mine instance for any of your projects.<br>
+just make sure to give me credit by adding a link to this github repo
 
 https://pixelfinder.153070065.xyz/api?nick=kisielo85&year=23
 
