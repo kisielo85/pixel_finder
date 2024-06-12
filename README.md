@@ -197,7 +197,7 @@ example - **20\*\*\_scraped** = **2022_scraped** & **2023_scraped**
 
 well, since the project relies on unofficial datasets, it just happens.
 
-basically - the more pixels you've placed, the higher the chance of them being in unofficial datasets, and that translates to a better chanse of getting the correct result
+basically - the more pixels you've placed, the higher the chance of them being in unofficial datasets, and that translates to a better chance of getting the correct result
 
 read more in the [How does it work](#how-does-it-work) section
 
