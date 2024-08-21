@@ -9,8 +9,6 @@
 - ["user not found" ?](#user-not-found-)
 - [API](#api)
 
-this project is under development, you can check what I'm working on on my [trello board](https://trello.com/b/vH66AXR5/pixelfinderhttps:/)
-
 ## Data used
 
 official datasets: [2017](https://www.reddit.com/r/redditdata/comments/6640ru/place_datasets_april_fools_2017/) / [2022](https://www.reddit.com/r/place/comments/txvk2d/rplace_datasets_april_fools_2022/) / [2023](https://www.reddit.com/r/place/comments/15bjm5o/rplace_2023_data/)
@@ -143,7 +141,6 @@ CREATE TABLE 2023_scraped (
   date DATETIME,
   x INT,
   y INT,
-  color VARCHAR(6),
   username VARCHAR(20)
 );
 
@@ -172,26 +169,27 @@ for a faster database, the following indexes are needed:
 ```
 -- nick to hash search
 CREATE INDEX idx_username on 2017_users(username);
-CREATE INDEX idx_username on 20**_scraped(username);
-CREATE INDEX idx_date on 20**_official(date);
+CREATE INDEX idx_username on 2022_scraped(username);
+CREATE INDEX idx_date on 2022_official(date);
+CREATE INDEX idx_username on 2023_scraped(username);
+CREATE INDEX idx_date on 2023_official(date);
 
 -- getting pixels
-CREATE INDEX idx_hash on 20**_official(hash);
+CREATE INDEX idx_hash on 2017_official(hash);
+CREATE INDEX idx_hash on 2022_official(hash);
+CREATE INDEX idx_hash on 2023_official(hash);
 
 -- trophies
-CREATE INDEX idx_first_placer on 20**_trophy(first_placer);
-CREATE INDEX idx_final_canvas on 20**_trophy(final_canvas);
+CREATE INDEX idx_first_placer on 2022_trophy(first_placer);
+CREATE INDEX idx_final_canvas on 2022_trophy(final_canvas);
+CREATE INDEX idx_first_placer on 2023_trophy(first_placer);
+CREATE INDEX idx_final_canvas on 2023_trophy(final_canvas);
 
--- hash to nick search
+-- hash to nick search (not supported by pixel finder)
 CREATE INDEX idx_hash on 2017_users(hash);
-CREATE INDEX idx_date on 20**_scraped(date);
+CREATE INDEX idx_date on 2022_scraped(date);
+CREATE INDEX idx_date on 2023_scraped(date);
 ```
-
-note:
-
-**20\*\*** means that an index should be made for all matching tables
-
-example - **20\*\*\_scraped** = **2022_scraped** & **2023_scraped**
 
 ## "user not found" ?
 
