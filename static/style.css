@@ -57,14 +57,12 @@ h2{
 }
 .image {
     zoom: 0.3;
-    -moz-transform: scale(0.3);
     position: relative;
     top: 0;
     left: 0;
     width: fit-content;
     margin: auto;
 }
-@supports (-moz-appearance:none) {.image {margin: -700px -950px -700px -950px;}}
 
 .circle{
     position: absolute;
@@ -234,10 +232,8 @@ strong, .timer{
 }
 
 @media (orientation : portrait) {
-    @supports (-moz-appearance:none) {.image { margin: -885px -1215px -885px -1215px; }}
     .image {
         zoom: 0.12;
-        -moz-transform: scale(0.12);
     }
     .box{
         width: 336px;
