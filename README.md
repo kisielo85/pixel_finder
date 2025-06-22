@@ -213,7 +213,7 @@ fetch(`${api_link}?nick=${nick}&year=${year}`)
 .then((response) => response.json())
 .then((data) => {
     console.log(data)
-}
+})
 ```
 
 if user is not found an error is returned: `{'error':'not_found'}`
